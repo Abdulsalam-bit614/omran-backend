@@ -14,6 +14,11 @@ const io = new Server(server, { cors: { origin: '*' } });
 app.use(cors());
 app.use(express.json());
 
+// المسار التجريبي (عشان الصاروخ 🚀)
+app.get('/', (req, res) => {
+    res.send('🚀 سيرفر عُمران يعمل بنجاح ومستعد لاستقبال الطلبات!');
+});
+
 // ══ Models ══
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -88,40 +93,6 @@ app.get('/api/pros', async (req, res) => {
     } catch(e) { res.status(500).json({ message: 'خطأ في جلب البيانات' }); }
 });
 
-app.post('/api/pros/add', authMiddleware, async (req, res) => {
-    try {
-        const pro = await new Pro({ ...req.body, userId: req.user.id }).save();
-        res.status(201).json({ message: 'تم نشر ملفك في عُمران', data: pro });
-    } catch(e) { res.status(400).json({ message: 'فشل في إنشاء الملف' }); }
-});
-
-app.post('/api/pros/:id/review', authMiddleware, async (req, res) => {
-    try {
-        const pro = await Pro.findById(req.params.id);
-        if (!pro) return res.status(404).json({ message: 'غير موجود' });
-        pro.reviews.push({ userId: req.user.id, userName: req.user.name, ...req.body });
-        pro.reviewsCount = pro.reviews.length;
-        pro.avgRating = pro.reviews.reduce((s,r) => s + r.rating, 0) / pro.reviews.length;
-        await pro.save();
-        res.json({ message: 'تم التقييم', avgRating: pro.avgRating });
-    } catch(e) { res.status(500).json({ message: 'خطأ' }); }
-});
-
-app.put('/api/pros/admin/feature-pro/:id', authMiddleware, async (req, res) => {
-    try { res.json(await Pro.findByIdAndUpdate(req.params.id, { isFeatured: req.body.isFeatured }, { new: true })); }
-    catch(e) { res.status(500).json({ message: 'خطأ' }); }
-});
-
-app.put('/api/pros/admin/verify-pro/:id', authMiddleware, async (req, res) => {
-    try { res.json(await Pro.findByIdAndUpdate(req.params.id, { verified: true }, { new: true })); }
-    catch(e) { res.status(500).json({ message: 'خطأ' }); }
-});
-
-app.put('/api/pros/admin/priority/:id', authMiddleware, async (req, res) => {
-    try { res.json(await Pro.findByIdAndUpdate(req.params.id, { priorityScore: req.body.priorityScore }, { new: true })); }
-    catch(e) { res.status(500).json({ message: 'خطأ' }); }
-});
-
 // ══ Socket.io ══
 io.on('connection', socket => {
     socket.on('join', userId => socket.join(userId));
@@ -131,12 +102,6 @@ io.on('connection', socket => {
 });
 
 // ══ Start ══
-// ══ Start ══
-// أضف هذا المسار البسيط للتأكد أن السيرفر شغال عند فتح الرابط الأساسي
-app.get('/', (req, res) => {
-    res.send('🚀 سيرفر عُمران يعمل بنجاح ومستعد لاستقبال الطلبات!');
-});
-
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('✅ متصل بقاعدة بيانات omranDB');
@@ -145,5 +110,4 @@ mongoose.connect(process.env.MONGO_URI)
             console.log(`📡 السيرفر شغال على البورت ${PORT}`);
         });
     })
-    .catch(err => console.error('❌ خطأ في الاتصال بالمونغو:', err));
-
+    .catch(err => console.error('❌ خطأ:', err));
