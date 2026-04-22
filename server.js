@@ -131,10 +131,19 @@ io.on('connection', socket => {
 });
 
 // ══ Start ══
+// ══ Start ══
+// أضف هذا المسار البسيط للتأكد أن السيرفر شغال عند فتح الرابط الأساسي
+app.get('/', (req, res) => {
+    res.send('🚀 سيرفر عُمران يعمل بنجاح ومستعد لاستقبال الطلبات!');
+});
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('✅ متصل بقاعدة بيانات omranDB');
-        server.listen(process.env.PORT || 10000
-
+        const PORT = process.env.PORT || 10000;
+        server.listen(PORT, () => {
+            console.log(`📡 السيرفر شغال على البورت ${PORT}`);
+        });
     })
-    .catch(err => console.error('❌ خطأ:', err));
+    .catch(err => console.error('❌ خطأ في الاتصال بالمونغو:', err));
+
