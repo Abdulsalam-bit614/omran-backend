@@ -134,6 +134,7 @@ io.on('connection', socket => {
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('✅ متصل بقاعدة بيانات omranDB');
-        server.listen(process.env.PORT || 5000, () => console.log('✅ السيرفر يعمل'));
+        server.listen(process.env.PORT || 10000
+
     })
     .catch(err => console.error('❌ خطأ:', err));
