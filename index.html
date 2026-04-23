@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,31 +9,20 @@
         :root { --primary: #2563eb; --success: #059669; --warning: #d97706; --danger: #dc2626; --bg: #f1f5f9; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 15px; direction: rtl; }
         .container { max-width: 900px; margin: auto; }
-         
-        /* شريط الإعلانات في الداشبورد للتجربة */
-        .ad-preview { background: #1e293b; color: #fbbf24; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; overflow: hidden; white-space: nowrap; }
-        .marquee { display: inline-block; animation: scroll 15s linear infinite; }
-        @keyframes scroll { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-
         .card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 1.5rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-        
         input, select { padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
         button { border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
         button:hover { opacity: 0.9; }
-        
         .btn-main { background: var(--primary); width: 100%; margin-top: 10px; }
         .pro-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 8px; margin-bottom: 8px; }
-        
         .badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 5px; }
         .badge-v { background: #dcfce7; color: #166534; }
         .badge-f { background: #fef9c3; color: #854d0e; }
-        
         .controls { display: flex; gap: 8px; align-items: center; }
         .btn-del { background: var(--danger); font-size: 12px; }
         .btn-v { background: var(--success); font-size: 12px; }
         .btn-f { background: var(--warning); font-size: 12px; }
-        
         .search-bar { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--primary); border-radius: 10px; box-sizing: border-box; }
     </style>
 </head>
@@ -42,8 +32,8 @@
     <div class="card" style="background: #f8fafc; border: 1px solid #cbd5e1;">
         <h3 style="margin-top:0">📢 إدارة شريط الإعلانات</h3>
         <div class="grid">
-            <input type="text" id="adContent" placeholder="نص الإعلان (مثلاً: خصم 20% لدى نجار السلام)">
-            <input type="number" id="adDays" placeholder="عدد الأيام">
+            <input type="text" id="adContent" placeholder="نص الإعلان">
+            <input type="number" id="adDays" placeholder="الأيام">
             <button onclick="updateAd()" style="background: #475569">نشر الإعلان</button>
         </div>
     </div>
@@ -59,11 +49,9 @@
                     <option value="بناء">بناء</option>
                     <option value="دهان">دهان</option>
                     <option value="نجار">نجار</option>
-                    <option value="فني تكييف">فني تكييف</option>
-                    <option value="حفر آبار">حفر آبار</option>
                 </select>
-                <input type="text" id="area" placeholder="المنطقة (مثال: طفس)" required>
-                <input type="text" id="phone" placeholder="رقم الهاتف" required>
+                <input type="text" id="area" placeholder="المنطقة" required>
+                <input type="text" id="phone" placeholder="الهاتف" required>
             </div>
             <button type="submit" class="btn-main">إضافة للمنظومة 🚀</button>
         </form>
@@ -71,8 +59,8 @@
 
     <div class="card">
         <h3>👥 إدارة المهنيين</h3>
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ابحث بالاسم، المهنة، أو المنطقة...">
-        <div id="list">جاري جلب البيانات من السيرفر...</div>
+        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ابحث هنا...">
+        <div id="list">جاري التحميل...</div>
     </div>
 </div>
 
@@ -80,7 +68,6 @@
     const API = 'https://omran-backend-1.onrender.com/api';
     let allPros = [];
 
-    // تحميل البيانات
     async function load() {
         try {
             const res = await fetch(`${API}/pros`);
@@ -91,90 +78,81 @@
         }
     }
 
-    // عرض القائمة
     function render(data) {
         document.getElementById('list').innerHTML = data.map(p => `
             <div class="pro-card">
                 <div>
-                    <strong>${p.name}</strong> <small style="color: #64748b;">| ${p.spec} (${p.area})</small>
-                    <div style="margin-top: 4px;">
+                    <strong>${p.name}</strong> <small>(${p.spec})</small>
+                    <div>
                         ${p.verified ? '<span class="badge badge-v">✓ موثق</span>' : ''}
                         ${p.isFeatured ? '<span class="badge badge-f">★ مميز</span>' : ''}
                     </div>
                 </div>
                 <div class="controls">
                     <input type="number" id="days-${p._id}" placeholder="أيام" style="width: 40px; padding: 5px;">
-                    <button class="btn-v" onclick="verify('${p._id}')">توثيق</button>
-                    <button class="btn-f" onclick="feature('${p._id}', ${!p.isFeatured})">
-                        ${p.isFeatured ? 'إلغاء' : 'تمييز'}
+                    
+                    <button class="btn-v" onclick="verify('${p._id}', ${p.verified})">
+                        ${p.verified ? 'فك التوثيق' : 'توثيق'}
                     </button>
+
+                    <button class="btn-f" onclick="feature('${p._id}', ${!p.isFeatured})">
+                        ${p.isFeatured ? 'إلغاء التميز' : 'تمييز'}
+                    </button>
+
                     <button class="btn-del" onclick="deletePro('${p._id}')">حذف 🗑️</button>
                 </div>
             </div>
         `).join('');
     }
 
-    // البحث اللحظي
+    // البحث
     document.getElementById('searchInput').oninput = (e) => {
         const val = e.target.value.toLowerCase();
-        const filtered = allPros.filter(p => 
-            p.name.toLowerCase().includes(val) || 
-            p.spec.toLowerCase().includes(val) || 
-            p.area.toLowerCase().includes(val)
-        );
+        const filtered = allPros.filter(p => p.name.toLowerCase().includes(val) || p.spec.includes(val) || p.area.includes(val));
         render(filtered);
     };
 
-    // حذف مهني
+    // حذف
     async function deletePro(id) {
-        if(confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) {
+        if(confirm('سيتم الحذف نهائياً، هل أنت متأكد؟')) {
             await fetch(`${API}/pros/${id}`, { method: 'DELETE' });
             load();
         }
     }
 
-    // تمييز مع تحديد المدة
+    // توثيق وفك توثيق
+    async function verify(id, currentStatus) {
+        await fetch(`${API}/pros/admin/verify-pro/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ verified: !currentStatus })
+        });
+        load();
+    }
+
+    // تمييز
     async function feature(id, status) {
-        const days = document.getElementById(`days-${id}`).value || 7; // افتراضي أسبوع
+        const days = document.getElementById(`days-${id}`).value || 7;
         await fetch(`${API}/pros/admin/feature-pro/${id}`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ isFeatured: status, days: days })
+            body: JSON.stringify({ isFeatured: status, days: parseInt(days) })
         });
         load();
     }
 
-    // توثيق
-    async function verify(id) {
-        await fetch(`${API}/pros/admin/verify-pro/${id}`, { method: 'PUT' });
-        load();
-    }
-
-    // تحديث شريط الإعلانات
-    async function updateAd() {
-        const content = document.getElementById('adContent').value;
-        const days = document.getElementById('adDays').value;
-        await fetch(`${API}/ads/update`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ content, expiryDate: new Date(Date.now() + days*24*60*60*1000) })
-        });
-        alert('تم تحديث شريط الإعلانات بنجاح!');
-    }
-
-    // إضافة مهني
+    // إضافة
     document.getElementById('addForm').onsubmit = async (e) => {
         e.preventDefault();
-        const body = {
-            name: document.getElementById('name').value,
-            spec: document.getElementById('spec').value,
-            area: document.getElementById('area').value,
-            phone: document.getElementById('phone').value
-        };
         await fetch(`${API}/pros/add`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
+            body: JSON.stringify({
+                name: document.getElementById('name').value,
+                spec: document.getElementById('spec').value,
+                area: document.getElementById('area').value,
+                phone: document.getElementById('phone').value
+            })
         });
         e.target.reset();
         load();
@@ -184,4 +162,3 @@
 </script>
 </body>
 </html>
-
