@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض الملف الشخصي - عُمران</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #1877f2; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 20px; }
+        
+        /* غلاف الصفحة (مثل فيسبوك) */
+        .cover-photo { height: 150px; background: linear-gradient(to bottom, #1877f2, #0052cc); }
+        .profile-container { max-width: 600px; margin: -50px auto 0; padding: 0 15px; }
+        
+        .profile-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; background: #eee; margin-top: -70px; object-fit: cover; }
+        
+        .user-name { font-size: 1.5rem; font-weight: bold; margin: 10px 0 5px; }
+        .user-tag { color: #65676b; font-size: 0.9rem; margin-bottom: 15px; }
+        
+        .action-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-msg { background: var(--primary); color: white; flex: 1; justify-content: center; }
+        .btn-call { background: #e4e6eb; color: black; flex: 1; justify-content: center; }
+
+        /* قسم الشغل والتعليقات */
+        .info-section { background: white; margin-top: 15px; border-radius: 15px; padding: 15px; text-align: right; }
+        .section-title { font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        
+        .comment { background: #f0f2f5; padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="cover-photo"></div>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div id="avatar" class="profile-img" style="display:flex; align-items:center; justify-content:center; font-size:2rem; background:#1877f2; color:white; margin: -70px auto 0;">ك</div>
+        <h2 class="user-name" id="viewName">جاري التحميل...</h2>
+        <p class="user-tag" id="viewSpec"></p>
+        
+        <div class="action-buttons">
+            <a href="#" id="waLink" class="btn btn-msg"><i class="fab fa-whatsapp"></i> مراسلة</a>
+            <a href="#" id="telLink" class="btn btn-call"><i class="fa fa-phone"></i> اتصال</a>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">نبذة عن العمل 🛠️</div>
+        <p id="viewBio" style="font-size: 0.9rem; color: #444;">هذا الحرفي موثق لدى منصة عمران، يقدم خدمات احترافية في منطقة درعا وما حولها.</p>
+    </div>
+
+    <div class="info-section">
+        <div class="section-title">تقييمات الزبائن ⭐</div>
+        <div id="commentsList">
+            <div class="comment">
+                <strong>أبو جاسم:</strong> والله شغل "كنانة" مرتب ونظيف، بنصح الجميع يتعامل معها.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = 'https://omran-backend-1.onrender.com/api';
+    
+    // جلب الـ ID من الرابط (الرابط بكون هيك: user-view.html?id=123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUserId = urlParams.get('id');
+
+    async function loadUserProfile() {
+        if (!targetUserId) return;
+
+        try {
+            const res = await fetch(`${API}/pros`); // جلب الكل للبحث عن هذا الشخص
+            const pros = await res.json();
+            const user = pros.find(p => p._id === targetUserId);
+
+            if (user) {
+                document.getElementById('viewName').innerText = user.name;
+                document.getElementById('viewSpec').innerText = user.spec + " • " + user.city;
+                document.getElementById('avatar').innerText = user.name[0];
+                document.getElementById('waLink').href = `https://wa.me/${user.phone}`;
+                document.getElementById('telLink').href = `tel:${user.phone}`;
+            }
+        } catch (e) { console.error("Error loading profile"); }
+    }
+
+    loadUserProfile();
+</script>
+
+</body>
+</html>
