@@ -1,128 +1,117 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عُمران - ساحة الحرفيين</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --fb-blue: #1877f2; --fb-bg: #f0f2f5; --fb-gray: #65676b; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--fb-bg); margin: 0; padding-bottom: 70px; }
-        
-        header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .logo { color: var(--fb-blue); font-size: 1.8rem; font-weight: bold; }
-
-        .container { max-width: 550px; margin: auto; padding: 10px; }
-
-        /* ستايل المنشور (Post) */
-        .post { background: white; border-radius: 12px; margin-bottom: 15px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .user-avatar { width: 45px; height: 45px; background: var(--fb-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none; }
-        .user-meta { flex: 1; }
-        .user-meta h4 { margin: 0; font-size: 1rem; color: #050505; }
-        .user-meta h4 a { text-decoration: none; color: inherit; }
-        .user-meta span { font-size: 0.8rem; color: var(--fb-gray); }
-
-        .post-content { font-size: 0.95rem; margin: 10px 0; line-height: 1.4; color: #1c1e21; }
-        
-        /* إحصائيات التفاعل */
-        .post-stats { display: flex; justify-content: space-between; padding: 8px 5px; border-bottom: 1px solid #ebedf0; font-size: 0.85rem; color: var(--fb-gray); }
-        
-        /* أزرار التفاعل (لايك، تعليق، مشاركة) */
-        .post-actions { display: flex; justify-content: space-around; padding: 5px 0; }
-        .action-item { flex: 1; text-align: center; padding: 8px; color: var(--fb-gray); font-weight: 600; cursor: pointer; border-radius: 5px; transition: 0.2s; font-size: 0.9rem; }
-        .action-item:hover { background: #f2f2f2; }
-        .action-item.active { color: var(--fb-blue); }
-
-        /* قسم التعليقات (مخفي ويظهر عند الضغط) */
-        .comments-area { background: #f8fafc; padding: 10px; border-radius: 8px; margin-top: 10px; display: none; }
-        .comment-item { display: flex; gap: 8px; margin-bottom: 8px; }
-        .comment-text { background: #e4e6eb; padding: 8px 12px; border-radius: 18px; font-size: 0.85rem; }
-
-        /* شريط التنقل السفلي */
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; }
-        .nav-link { color: var(--fb-gray); text-decoration: none; text-align: center; font-size: 0.75rem; }
-        .nav-link.active { color: var(--fb-blue); }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo">عُمران</div>
-        <a href="profile.html" style="color:var(--fb-gray); font-size:1.4rem;"><i class="fa-solid fa-circle-user"></i></a>
-    </header>
-
-    <div class="container" id="timeline">
-        </div>
-
-    <nav class="nav-bottom">
-        <a href="index.html" class="nav-link active"><i class="fa-solid fa-house"></i><br>الرئيسية</a>
-        <a href="search.html" class="nav-link"><i class="fa-solid fa-users"></i><br>الحرفيين</a>
-        <a href="register.html" class="nav-link"><i class="fa-solid fa-plus-square"></i><br>نشر</a>
-        <a href="profile.html" class="nav-link"><i class="fa-solid fa-bars"></i><br>القائمة</a>
-    </nav>
-
 <script>
-    const API = 'https://omran-backend-1.onrender.com/api';
+  const API_URL = 'https://omran-backend-1.onrender.com/api';
 
-    async function loadTimeline() {
-        const res = await fetch(`${API}/pros`);
-        const pros = await res.json();
-        const timeline = document.getElementById('timeline');
-        timeline.innerHTML = '';
+  // 1. وظيفة تحميل المنشورات (الحرفيين) في الصفحة الرئيسية
+  async function loadHomeContent() {
+    const feedContainer = document.getElementById('home-feed'); // تأكد من وجود هذا الـ ID في كودك
+    if(!feedContainer) return;
 
-        pros.forEach(pro => {
-            timeline.innerHTML += `
-                <div class="post">
-                    <div class="post-header">
-                        <a href="user-view.html?id=${pro._id}" class="user-avatar">${pro.name[0]}</a>
-                        <div class="user-meta">
-                            <h4><a href="user-view.html?id=${pro._id}">${pro.name}</a></h4>
-                            <span>${pro.spec} • درعا، ${pro.village || pro.city}</span>
-                        </div>
-                        <i class="fa-solid fa-ellipsis" style="color:gray"></i>
-                    </div>
+    try {
+      const res = await fetch(`${API_URL}/pros`);
+      const pros = await res.json();
+      feedContainer.innerHTML = '';
 
-                    <div class="post-content">
-                        أنا ${pro.name}، خبير في ${pro.spec}. يسعدني خدمتكم في منطقة ${pro.city}. تواصلوا معي للمزيد من التفاصيل! 🛠️⭐
-                    </div>
-
-                    <div class="post-stats">
-                        <span><i class="fa-solid fa-thumbs-up" style="color:var(--fb-blue)"></i> 12 إعجاب</span>
-                        <span>4 تعليقات</span>
-                    </div>
-
-                    <div class="post-actions">
-                        <div class="action-item" onclick="this.classList.toggle('active')">
-                            <i class="fa-regular fa-thumbs-up"></i> إعجاب
-                        </div>
-                        <div class="action-item" onclick="toggleComments('${pro._id}')">
-                            <i class="fa-regular fa-comment"></i> تعليق
-                        </div>
-                        <a href="user-view.html?id=${pro._id}" class="action-item" style="text-decoration:none">
-                            <i class="fa-solid fa-share"></i> رؤية الملف
-                        </a>
-                    </div>
-
-                    <div id="comments-${pro._id}" class="comments-area">
-                        <div class="comment-item">
-                            <div class="comment-text"><strong>أبو محمد:</strong> ما شاء الله، الشغل مبين عليه نظيف!</div>
-                        </div>
-                        <div class="comment-item">
-                            <div class="comment-text"><strong>كنانة:</strong> بالتوفيق يا معلم.</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+      pros.forEach(pro => {
+        feedContainer.innerHTML += `
+          <div class="card" style="margin-bottom:15px; padding:15px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+              <div class="avatar" style="background:var(--blue); color:white; width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                ${pro.name[0]}
+              </div>
+              <div style="flex:1">
+                <h4 style="margin:0">${pro.name} <i class="fas fa-check-circle" style="color:var(--blue); font-size:0.8rem"></i></h4>
+                <small style="color:gray">${pro.spec} • ${pro.city}</small>
+              </div>
+              <div class="status-badge" style="color:${pro.isBusy ? 'red' : 'green'}; font-size:0.7rem; font-weight:bold;">
+                ${pro.isBusy ? '● مشغول' : '● متاح'}
+              </div>
+            </div>
+            <p style="font-size:0.9rem; color:#333;">أهلاً بكم! أنا ${pro.name}، متخصص في ${pro.spec}. يسعدني خدمتكم بأفضل جودة في منطقة ${pro.city}.</p>
+            <div style="display:flex; gap:10px; margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+              <a href="tel:${pro.phone}" style="flex:1; text-align:center; padding:8px; background:var(--blue-lt); color:var(--blue); border-radius:8px; text-decoration:none; font-weight:bold; font-size:0.85rem;">
+                <i class="fas fa-phone"></i> اتصال
+              </a>
+              <a href="https://wa.me/${pro.phone}" style="flex:1; text-align:center; padding:8px; background:#e8f5e9; color:#2e7d32; border-radius:8px; text-decoration:none; font-weight:bold; font-size:0.85rem;">
+                <i class="fab fa-whatsapp"></i> واتساب
+              </a>
+              <button onclick="viewUserProfile('${pro._id}')" style="flex:0.5; background:#f5f5f5; border:none; border-radius:8px; cursor:pointer;">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    } catch (err) {
+      console.error("خطأ في جلب البيانات:", err);
     }
+  }
 
-    function toggleComments(id) {
-        const area = document.getElementById(`comments-${id}`);
-        area.style.display = area.style.display === 'block' ? 'none' : 'block';
+  // 2. وظيفة تسجيل الدخول وربطها بالواجهة
+  async function handleLogin(id, pass) {
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: id, password: pass })
+      });
+      const data = await res.json();
+      if(res.ok) {
+        localStorage.setItem('userId', data.user._id);
+        localStorage.setItem('userName', data.user.name);
+        showToast("تم تسجيل الدخول بنجاح ✅");
+        location.reload(); // لتفعيل لوحة التحكم في الرئيسية
+      } else {
+        showToast("خطأ: " + data.message, "err");
+      }
+    } catch (err) {
+      showToast("عذراً، السيرفر لا يستجيب", "err");
     }
+  }
 
-    loadTimeline();
+  // 3. إضافة "لوحة التحكم السريعة" في أعلى الرئيسية للمسجلين
+  function setupAdminHeader() {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    if(userId) {
+      const adminHeader = document.createElement('div');
+      adminHeader.className = 'card';
+      adminHeader.style = "margin-bottom:15px; border:2px solid var(--blue); padding:15px; background:var(--blue-lt);";
+      adminHeader.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>مرحباً، ${userName} 👋</strong><br>
+            <small>يمكنك إدارة حالتك من هنا</small>
+          </div>
+          <button onclick="logout()" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">تسجيل خروج</button>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:10px;">
+          <button onclick="updateMyStatus(false)" style="flex:1; padding:8px; border-radius:8px; border:none; background:green; color:white; font-weight:bold;">أنا متاح الآن ✅</button>
+          <button onclick="updateMyStatus(true)" style="flex:1; padding:8px; border-radius:8px; border:none; background:red; color:white; font-weight:bold;">أنا مشغول 🔕</button>
+        </div>
+      `;
+      document.getElementById('home-feed').prepend(adminHeader);
+    }
+  }
+
+  async function updateMyStatus(status) {
+    const userId = localStorage.getItem('userId');
+    await fetch(`${API_URL}/user/status/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isBusy: status })
+    });
+    showToast("تم تحديث حالتك بنجاح");
+    loadHomeContent();
+  }
+
+  function logout() {
+    localStorage.clear();
+    location.reload();
+  }
+
+  // تشغيل الوظائف عند فتح الصفحة
+  window.addEventListener('DOMContentLoaded', () => {
+    loadHomeContent();
+    setTimeout(setupAdminHeader, 1000); // ننتظر قليلاً حتى يحمل الـ Feed
+  });
 </script>
-</body>
-</html>
