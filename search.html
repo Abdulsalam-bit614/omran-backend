@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث عن حرفي - عُمران</title>
+    <style>
+        :root { --blue: #1a56db; --red: #ef4444; --green: #22c55e; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
+        .filter-section { background: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        select, input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
+        
+        .pro-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border-right: 5px solid #ccc; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .pro-info h3 { margin: 0; font-size: 1.1rem; }
+        .pro-info p { margin: 5px 0; color: #64748b; font-size: 0.9rem; }
+        
+        .status-tag { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .status-available { background: #dcfce7; color: var(--green); border-right-color: var(--green); }
+        .status-busy { background: #fee2e2; color: var(--red); border-right-color: var(--red); }
+        
+        .btn-call { background: var(--blue); color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-size: 0.9rem; }
+        .busy-text { color: var(--red); font-size: 0.8rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="filter-section">
+        <h3 style="margin-top:0">ابحث عن معلّم 🛠️</h3>
+        <select id="specFilter" onchange="fetchPros()">
+            <option value="">كل المهن</option>
+            <option value="نجار">نجار</option>
+            <option value="حداد">حداد</option>
+            <option value="بناء">بناء</option>
+            <option value="كهربائي">كهربائي</option>
+        </select>
+        <input type="text" id="cityFilter" placeholder="المحافظة (مثلاً: درعا)" oninput="fetchPros()">
+    </div>
+
+    <div id="prosList">
+        </div>
+
+<script>
+    const API = 'https://omran-backend-1.onrender.com/api';
+
+    async function fetchPros() {
+        const spec = document.getElementById('specFilter').value;
+        const city = document.getElementById('cityFilter').value;
+        
+        // بناء رابط الفلترة
+        let url = `${API}/pros?`;
+        if(spec) url += `spec=${spec}&`;
+        if(city) url += `city=${city}`;
+
+        const res = await fetch(url);
+        const pros = await res.json();
+        
+        const list = document.getElementById('prosList');
+        list.innerHTML = '';
+
+        pros.forEach(pro => {
+            const card = document.createElement('div');
+            card.className = `pro-card ${pro.isBusy ? 'status-busy' : 'status-available'}`;
+            card.style.borderRightColor = pro.isBusy ? 'var(--red)' : 'var(--green)';
+
+            card.innerHTML = `
+                <div class="pro-info">
+                    <h3>${pro.name}</h3>
+                    <p>${pro.spec} - ${pro.village || pro.city}</p>
+                    <span class="status-tag ${pro.isBusy ? 'status-busy' : 'status-available'}">
+                        ${pro.isBusy ? '● مشغول' : '● متاح الآن'}
+                    </span>
+                </div>
+                <div>
+                    ${pro.isBusy 
+                        ? '<span class="busy-text">لا يستقبل مكالمات</span>' 
+                        : `<a href="tel:${pro.phone}" class="btn-call">اتصال 📞</a>`}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    // تحميل البيانات أول ما تفتح الصفحة
+    fetchPros();
+</script>
+</body>
+</html>
