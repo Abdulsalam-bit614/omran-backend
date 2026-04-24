@@ -8,37 +8,51 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Tajawal', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
-        .admin-container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .admin-container { max-width: 1100px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         h1 { color: #1a56db; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
-        .stat-card { background: #1a56db; color: white; padding: 20px; border-radius: 12px; text-align: center; }
+        .stat-card { background: #1a56db; color: white; padding: 20px; border-radius: 12px; text-align: center; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid #e2e8f0; }
         th { background: #f8fafc; color: #64748b; font-weight: 700; }
-        tr:hover { background: #f1f5f9; }
-        .btn-action { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: bold; margin-left: 5px; transition: 0.3s; }
+        tr:hover { background: #f8fafc; }
+        .btn-action { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: bold; margin-left: 5px; transition: 0.2s; }
         .btn-verify { background: #22c55e; color: white; }
         .btn-delete { background: #ef4444; color: white; }
         .btn-feature { background: #f59e0b; color: white; }
+        .btn-action:active { scale: 0.95; }
         .badge { padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; }
         .badge-verified { background: #dcfce7; color: #166534; }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 1000; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
+<div id="loader" class="loading-overlay"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:#1a56db;"></i></div>
+
 <div class="admin-container">
     <h1>
-        <span><i class="fa-solid fa-gauge-high"></i> إدارة نظام عُمران</span>
-        <button onclick="location.reload()" style="background:none; border:none; cursor:pointer; color:#1a56db;"><i class="fa-solid fa-rotate"></i></button>
+        <span><i class="fa-solid fa-user-shield"></i> لوحة إدارة عُمران</span>
+        <button onclick="loadAdminData()" style="background:none; border:none; cursor:pointer; color:#1a56db; font-size: 1.5rem;"><i class="fa-solid fa-arrows-rotate"></i></button>
     </h1>
     
     <div class="stats-grid">
-        <div class="stat-card"><h3 id="count-pros">0</h3><p>إجمالي الحرفيين</p></div>
-        <div class="stat-card" style="background:#22c55e;"><h3 id="count-verified">0</h3><p>حسابات موثقة</p></div>
-        <div class="stat-card" style="background:#64748b;"><h3 id="count-users">0</h3><p>إجمالي المستخدمين</p></div>
+        <div class="stat-card">
+            <h3 id="count-pros">0</h3>
+            <p>إجمالي الحرفيين</p>
+        </div>
+        <div class="stat-card" style="background:#22c55e;">
+            <h3 id="count-verified">0</h3>
+            <p>حسابات موثقة</p>
+        </div>
+        <div class="stat-card" style="background:#64748b;">
+            <h3 id="count-users">0</h3>
+            <p>تحت المراجعة</p>
+        </div>
     </div>
 
-    <h3><i class="fa-solid fa-users-gear"></i> التحكم بالحسابات</h3>
+    <h3><i class="fa-solid fa-list-check"></i> إدارة طلبات الحرفيين</h3>
     <div style="overflow-x: auto;">
         <table>
             <thead>
@@ -47,11 +61,11 @@
                     <th>التخصص</th>
                     <th>المنطقة</th>
                     <th>الحالة</th>
-                    <th>إجراءات الإدارة</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody id="pros-data">
-                <tr><td colspan="5" style="text-align:center;">جاري جلب البيانات من السيرفر...</td></tr>
+                <tr><td colspan="5" style="text-align:center;">جاري جلب البيانات...</td></tr>
             </tbody>
         </table>
     </div>
@@ -60,45 +74,82 @@
 <script>
     const API = 'https://omran-backend-1.onrender.com/api';
 
+    // دالة لجلب البيانات وتحديث اللوحة
     async function loadAdminData() {
+        showLoader(true);
         try {
             const res = await fetch(`${API}/pros`);
             const data = await res.json();
             
             document.getElementById('count-pros').innerText = data.length;
-            document.getElementById('count-verified').innerText = data.filter(p => p.isVerified).length;
+            document.getElementById('count-verified').innerText = data.filter(p => p.verified).length;
             
             const tbody = document.getElementById('pros-data');
-            tbody.innerHTML = data.map(p => `
-                <tr>
-                    <td>
-                        <strong>${p.name}</strong> 
-                        ${p.isVerified ? '<span class="badge badge-verified">موثق ✅</span>' : ''}
-                    </td>
-                    <td>${p.spec}</td>
-                    <td>${p.city}</td>
-                    <td>${p.isBusy ? '🔴 مشغول' : '🟢 متاح'}</td>
-                    <td>
-                        <button class="btn-action btn-verify" onclick="updatePro('${p._id}', 'verify')">توثيق</button>
-                        <button class="btn-action btn-feature" onclick="updatePro('${p._id}', 'feature')">تمييز</button>
-                        <button class="btn-action btn-delete" onclick="deletePro('${p._id}')">حذف</button>
-                    </td>
-                </tr>
-            `).join('');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا يوجد حرفيين مسجلين حالياً</td></tr>';
+            } else {
+                tbody.innerHTML = data.map(p => `
+                    <tr>
+                        <td>
+                            <strong>${p.name}</strong> 
+                            ${p.verified ? '<span class="badge badge-verified">موثق ✅</span>' : ''}
+                        </td>
+                        <td>${p.spec || 'غير محدد'}</td>
+                        <td>${p.city} - ${p.village}</td>
+                        <td>${p.isBusy ? '🔴 مشغول' : '🟢 متاح'}</td>
+                        <td>
+                            <button class="btn-action btn-verify" onclick="updateProStatus('${p._id}', 'verify')">توثيق</button>
+                            <button class="btn-action btn-delete" onclick="deleteUser('${p._id}')">حذف</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
         } catch (e) {
-            document.getElementById('pros-data').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">فشل الاتصال بالسيرفر. تأكد أن الباك إند يعمل.</td></tr>';
+            alert("خطأ في الاتصال بالسيرفر");
+        } finally {
+            showLoader(false);
         }
     }
 
-    // سيتم تفعيل هذه الدوال بمجرد تجهيز الـ Endpoints في الباك إند
-    async function updatePro(id, action) {
-        alert("طلب تنفيذ [" + action + "] للحرفي: " + id + "\nسيتم تفعيل هذا الزر بربطه مع الباك إند فوراً.");
+    // دالة توثيق الحرفي
+    async function updateProStatus(id, action) {
+        if (!confirm("هل تريد توثيق هذا الحساب؟")) return;
+        
+        showLoader(true);
+        try {
+            // ملاحظة: هذا المسار يجب أن يكون مفعلاً في server.js
+            const res = await fetch(`${API}/admin/verify/${id}`, { method: 'PUT' });
+            if (res.ok) {
+                alert("تم التوثيق بنجاح!");
+                loadAdminData();
+            }
+        } catch (e) {
+            alert("فشل التحديث، تأكد من إعدادات السيرفر");
+        } finally {
+            showLoader(false);
+        }
     }
 
-    async function deletePro(id) {
-        if(confirm("تحذير: هل أنت متأكد من حذف هذا الحساب نهائياً من قاعدة البيانات؟")) {
-            alert("سيتم الحذف فوراً...");
+    // دالة حذف الحساب
+    async function deleteUser(id) {
+        if (!confirm("تحذير: سيتم حذف الحساب نهائياً، هل أنت متأكد؟")) return;
+        
+        showLoader(true);
+        try {
+            const res = await fetch(`${API}/admin/delete/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert("تم الحذف بنجاح");
+                loadAdminData();
+            }
+        } catch (e) {
+            alert("خطأ في الحذف");
+        } finally {
+            showLoader(false);
         }
+    }
+
+    function showLoader(show) {
+        document.getElementById('loader').style.display = show ? 'flex' : 'none';
     }
 
     window.onload = loadAdminData;
