@@ -1,0 +1,17 @@
+{
+  "name": "عُمران لخدمات الصيانة",
+  "short_name": "عُمران",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#1a56db",
+  "orientation": "portrait",
+  "description": "منصة الحرفيين الأولى في سوريا",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/9437/9437568.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
