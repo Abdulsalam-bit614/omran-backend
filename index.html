@@ -1,175 +1,94 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" id="meta-theme" content="#1a56db">
-<title>عُمران – سوريا</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-
-<style>
-  /* قمت بدمج ستايلاتك الأساسية مع ستايل المنشورات */
-  :root { --blue: #1a56db; --blue-dk: #1241a8; --blue-lt: #e8f0fe; --gray: #64748b; }
-  body { font-family: 'Tajawal', sans-serif; background: #f1f5f9; margin: 0; padding-bottom: 70px; direction: rtl; }
-  
-  header { background: var(--blue); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-  .logo { font-size: 1.4rem; font-weight: 900; }
-
-  .nav-bot { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
-  .nav-btn { color: var(--gray); text-decoration: none; text-align: center; font-size: 0.75rem; flex:1; border:none; background:none; }
-  .nav-btn.active { color: var(--blue); }
-  .nav-btn i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
-
-  .page { display: none; padding: 15px; max-width: 600px; margin: auto; }
-  .page.active { display: block; }
-
-  /* ستايل الكرت (المنشور) */
-  .card { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-  .pro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .avatar { width: 50px; height: 50px; border-radius: 14px; background: var(--blue-lt); color: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
-  .status-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; font-weight: bold; }
-  
-  .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-  .btn-action { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 0.9rem; }
-  .btn-call { background: var(--blue); color: white; }
-  .btn-wa { background: #22c55e; color: white; }
-
-  /* لوحة الإدارة السريعة */
-  .admin-box { background: linear-gradient(135deg, var(--blue), #3b82f6); color: white; border-radius: 16px; padding: 15px; margin-bottom: 20px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم عُمران - الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        h1 { color: #1a56db; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #1a56db; color: white; padding: 20px; border-radius: 10px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #64748b; }
+        .btn-action { padding: 6px 12px; border-radius: 5px; border: none; cursor: pointer; font-size: 0.8rem; margin-left: 5px; }
+        .btn-verify { background: #22c55e; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-feature { background: #f59e0b; color: white; }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">عُمران</div>
-  <div id="user-top-info" style="font-size: 0.8rem;"></div>
-</header>
+<div class="admin-container">
+    <h1><i class="fa-solid fa-gauge"></i> لوحة إدارة عُمران</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card"><h3 id="count-pros">0</h3><p>إجمالي الحرفيين</p></div>
+        <div class="stat-card" style="background:#22c55e;"><h3 id="count-verified">0</h3><p>حسابات موثقة</p></div>
+        <div class="stat-card" style="background:#64748b;"><h3 id="count-users">0</h3><p>إجمالي المستخدمين</p></div>
+    </div>
 
-<div id="pg-home" class="page active">
-  <div id="admin-tools"></div> <div id="main-feed">
-    <p style="text-align: center; color: gray;">جاري تحميل المعلمين...</p>
-  </div>
+    <h3><i class="fa-solid fa-users-gear"></i> إدارة الحرفيين</h3>
+    <table id="admin-table">
+        <thead>
+            <tr>
+                <th>الاسم</th>
+                <th>التخصص</th>
+                <th>المنطقة</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="pros-data">
+            </tbody>
+    </table>
 </div>
-
-<div id="pg-login" class="page">
-  <div class="card">
-    <h2 style="margin-bottom:20px; text-align:center;">تسجيل الدخول</h2>
-    <input type="text" id="l-phone" placeholder="رقم الهاتف" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-    <input type="password" id="l-pass" placeholder="كلمة المرور" style="width:100%; padding:12px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
-    <button onclick="loginAction()" style="width:100%; padding:12px; background:var(--blue); color:white; border:none; border-radius:8px; font-weight:bold;">دخول</button>
-  </div>
-</div>
-
-<nav class="nav-bot">
-  <button class="nav-btn active" onclick="showPage('pg-home')"><i class="fa-solid fa-house"></i>الرئيسية</button>
-  <button class="nav-btn" onclick="showPage('pg-login')"><i class="fa-solid fa-user"></i>حسابي</button>
-</nav>
 
 <script>
-const API_URL = 'https://omran-backend-1.onrender.com/api';
+    const API = 'https://omran-backend-1.onrender.com/api';
 
-// 1. التنقل بين الصفحات
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(id === 'pg-home') loadPros();
-}
-
-// 2. تحميل البيانات من السيرفر
-async function loadPros() {
-  const feed = document.getElementById('main-feed');
-  try {
-    const res = await fetch(`${API_URL}/pros`);
-    const pros = await res.json();
-    feed.innerHTML = '';
-
-    // إظهار لوحة تحكم الأدمن إذا مسجل دخول
-    const myId = localStorage.getItem('userId');
-    if(myId) setupAdminPanel(myId);
-
-    pros.forEach(pro => {
-      feed.innerHTML += `
-        <div class="card">
-          <div class="pro-header">
-            <div class="avatar">${pro.name[0]}</div>
-            <div style="flex:1">
-              <h4 style="margin:0">${pro.name} <i class="fas fa-check-circle" style="color:var(--blue)"></i></h4>
-              <small style="color:gray">${pro.spec} • ${pro.city}</small>
-            </div>
-            <span class="status-badge" style="background:${pro.isBusy ? '#fee2e2' : '#dcfce7'}; color:${pro.isBusy ? 'red' : 'green'};">
-              ${pro.isBusy ? 'مشغول' : 'متاح'}
-            </span>
-          </div>
-          <p style="font-size:0.9rem; color:#444;">متخصص في أعمال ${pro.spec} في محافظة درعا.</p>
-          <div class="btn-group">
-            ${pro.isBusy ? '' : `<a href="tel:${pro.phone}" class="btn-action btn-call"><i class="fa fa-phone"></i> اتصال</a>`}
-            <a href="https://wa.me/${pro.phone}" class="btn-action btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
-          </div>
-        </div>
-      `;
-    });
-  } catch (e) {
-    feed.innerHTML = "فشل تحميل البيانات من السيرفر";
-  }
-}
-
-// 3. تسجيل الدخول
-async function loginAction() {
-  const phone = document.getElementById('l-phone').value;
-  const pass = document.getElementById('l-pass').value;
-  try {
-    const res = await fetch(`${API_URL}/login`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ phone, password: pass })
-    });
-    const data = await res.json();
-    if(res.ok) {
-      localStorage.setItem('userId', data.user._id);
-      localStorage.setItem('userName', data.user.name);
-      alert("أهلاً بك يا " + data.user.name);
-      location.reload();
-    } else {
-      alert("خطأ: " + data.message);
+    async function loadAdminData() {
+        try {
+            const res = await fetch(`${API}/pros`);
+            const data = await res.json();
+            document.getElementById('count-pros').innerText = data.length;
+            document.getElementById('count-verified').innerText = data.filter(p => p.isVerified).length;
+            
+            const tbody = document.getElementById('pros-data');
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.name} ${p.isVerified ? '✅' : ''}</td>
+                    <td>${p.spec}</td>
+                    <td>${p.city}</td>
+                    <td>${p.isBusy ? '🔴 مشغول' : '🟢 متاح'}</td>
+                    <td>
+                        <button class="btn-action btn-verify" onclick="updatePro('${p._id}', 'verify')">توثيق</button>
+                        <button class="btn-action btn-feature" onclick="updatePro('${p._id}', 'feature')">تمييز</button>
+                        <button class="btn-action btn-delete" onclick="deletePro('${p._id}')">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (e) {
+            console.error("خطأ في تحميل بيانات الإدارة");
+        }
     }
-  } catch (e) { alert("السيرفر لا يستجيب"); }
-}
 
-// 4. لوحة الإدارة السريعة
-function setupAdminPanel(userId) {
-  const adminTools = document.getElementById('admin-tools');
-  const userName = localStorage.getItem('userName');
-  adminTools.innerHTML = `
-    <div class="admin-box">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <strong>مرحباً ${userName} 👋</strong>
-        <button onclick="logout()" style="background:none; border:none; color:white; font-size:0.7rem; cursor:pointer;">خروج</button>
-      </div>
-      <div style="display:flex; gap:10px; margin-top:15px;">
-        <button onclick="setStatus(false)" style="flex:1; padding:8px; border-radius:8px; border:none; background:white; color:green; font-weight:bold;">أنا متاح ✅</button>
-        <button onclick="setStatus(true)" style="flex:1; padding:8px; border-radius:8px; border:none; background:white; color:red; font-weight:bold;">أنا مشغول 🔕</button>
-      </div>
-    </div>
-  `;
-}
+    async function updatePro(id, action) {
+        alert("سيتم تنفيذ إجراء: " + action + " للحرفي " + id);
+        // هنا سنضيف لاحقاً كود الـ PUT الخاص بالباك إند
+    }
 
-async function setStatus(status) {
-  const userId = localStorage.getItem('userId');
-  await fetch(`${API_URL}/user/status/${userId}`, {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ isBusy: status })
-  });
-  loadPros();
-}
+    async function deletePro(id) {
+        if(confirm("هل أنت متأكد من حذف هذا الحساب نهائياً؟")) {
+            // هنا سنضيف لاحقاً كود الـ DELETE
+        }
+    }
 
-function logout() { localStorage.clear(); location.reload(); }
-
-// تشغيل عند التحميل
-window.onload = loadPros;
+    window.onload = loadAdminData;
 </script>
 </body>
 </html>
-
