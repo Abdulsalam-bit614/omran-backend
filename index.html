@@ -3,94 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عُمران - خدمات الصيانة</title>
+    <title>عُمران - المنصة الشاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #1a56db; --bg: #f8fafc; --text: #1e293b; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; }
-        
-        /* Header */
-        header { background: var(--primary); color: white; padding: 20px; border-radius: 0 0 25px 25px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .search-bar { background: white; margin: -25px 20px 20px; padding: 12px 20px; border-radius: 15px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .search-bar input { border: none; outline: none; width: 100%; font-family: inherit; font-size: 1rem; }
+        :root { --primary: #1a56db; --bg: #f1f5f9; --white: #ffffff; --text: #1e293b; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; overflow-x: hidden; }
 
-        /* Pro Cards */
+        /* Header & Logo */
+        header { background: var(--primary); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .buildings { display: flex; align-items: flex-end; gap: 3px; position: relative; padding-top: 5px; }
+        .b { background: white; width: 7px; border-radius: 1px; }
+        .b1 { height: 12px; } .b2 { height: 18px; } .b3 { height: 25px; }
+        .b-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: white; }
+        .logo-text { font-weight: bold; font-size: 1.3rem; letter-spacing: 1px; }
+
+        /* Search & Filters */
+        .search-section { background: var(--primary); padding: 0 20px 25px; border-radius: 0 0 30px 30px; }
+        .search-bar { background: white; padding: 12px 15px; border-radius: 12px; display: flex; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .search-bar input { border: none; outline: none; width: 100%; font-family: inherit; font-size: 0.9rem; }
+        
+        .filters { display: flex; gap: 8px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .filters select { border: none; padding: 8px 12px; border-radius: 8px; font-family: inherit; font-size: 0.8rem; background: rgba(255,255,255,0.2); color: white; outline: none; min-width: 100px; }
+        .filters select option { color: black; }
+
+        /* Cards */
         .pros-container { padding: 20px; display: grid; gap: 15px; }
-        .pro-card { background: white; padding: 15px; border-radius: 18px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
-        .pro-card:active { transform: scale(0.98); }
-        .avatar { width: 60px; height: 60px; background: #e2e8f0; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #64748b; }
-        .pro-info h3 { margin: 0; font-size: 1.1rem; }
-        .pro-info p { margin: 5px 0 0; font-size: 0.9rem; color: #64748b; }
-        .status { font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; margin-top: 5px; display: inline-block; }
-        .status.online { background: #dcfce7; color: #166534; }
-        .status.busy { background: #fee2e2; color: #991b1b; }
+        .pro-card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .pro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .avatar-box { width: 55px; height: 55px; background: #e2e8f0; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #64748b; border: 2px solid #fff; }
+        .pro-details h3 { margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 5px; }
+        .pro-details p { margin: 3px 0; font-size: 0.85rem; color: #64748b; }
+        
+        .action-btns { display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .btn { flex: 1; border: none; padding: 8px; border-radius: 10px; font-family: inherit; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.3s; }
+        .btn-call { background: #dcfce7; color: #166534; }
+        .btn-ws { background: #25d366; color: white; }
+        .btn-chat { background: #eff6ff; color: #1e40af; }
+
+        /* Modals (Popups) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 25px; padding: 25px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; left: 15px; font-size: 1.2rem; cursor: pointer; color: #94a3b8; }
+        
+        input[type="text"], input[type="password"], input[type="tel"], input[type="email"], select.form-input {
+            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-family: inherit;
+        }
+        .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
         /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid #e2e8f0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .nav-item { color: #94a3b8; text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; gap: 4px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #e2e8f0; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 1000; }
+        .nav-item { color: #94a3b8; text-decoration: none; text-align: center; font-size: 0.75rem; transition: 0.3s; }
         .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.3rem; }
-
-        /* Floating Action Button */
-        .fab { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-top: -35px; border: 5px solid var(--bg); box-shadow: 0 4px 10px rgba(26, 86, 219, 0.3); }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>عُمران</h1>
-        <p>ابحث عن أمهر الحرفيين في منطقتك</p>
+        <div class="logo-box">
+            <div class="buildings">
+                <div class="b-line"></div>
+                <div class="b b1"></div>
+                <div class="b b2"></div>
+                <div class="b b3"></div>
+            </div>
+            <span class="logo-text">عُمران</span>
+        </div>
+        <div onclick="openModal('menuModal')" style="cursor:pointer;"><i class="fa-solid fa-bars-staggered fa-lg"></i></div>
     </header>
 
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass" style="margin-left: 10px; color: #94a3b8;"></i>
-        <input type="text" placeholder="ما هي المهنة التي تبحث عنها؟" id="searchInput">
+    <div class="search-section">
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass" style="margin-left: 10px; color: #94a3b8;"></i>
+            <input type="text" id="mainSearch" placeholder="عن ماذا تبحث اليوم؟">
+        </div>
+        <div class="filters">
+            <select id="filterSpec"><option value="">كل المهن</option></select>
+            <select id="filterCity"><option value="">كل المدن</option></select>
+            <select id="filterVillage"><option value="">كل القرى</option></select>
+        </div>
     </div>
 
     <div class="pros-container" id="prosList">
-        <div style="text-align: center; color: #64748b; padding: 50px;">جاري تحميل الحرفيين...</div>
+        <div style="text-align: center; color: #64748b; padding: 50px;">جاري جلب أفضل الحرفيين...</div>
+    </div>
+
+    <div id="authModal" class="modal">
+        <div class="modal-content" id="authContent">
+            </div>
+    </div>
+
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('menuModal')">&times;</span>
+            <h3 style="text-align:center;">إعدادات عُمران</h3>
+            <hr border="0" style="height:1px; background:#f1f5f9;">
+            <div style="padding:10px 0;">
+                <p onclick="alert('تطبيق عُمران: منصتك الأولى للوصول للحرفيين المهرة في درعا وحوران.')" style="cursor:pointer;"><i class="fa-solid fa-circle-info"></i> من نحن</p>
+                <p onclick="alert('تواصل معنا عبر واتساب: 015906442214\nإيميل: support@omran.com')" style="cursor:pointer;"><i class="fa-solid fa-headset"></i> تواصل معنا</p>
+            </div>
+        </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>الرئيسية</span></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-compass"></i><span>تصفح</span></a>
-        <div class="nav-item"><div class="fab"><i class="fa-solid fa-plus"></i></div></div>
-        <a href="#" class="nav-item"><i class="fa-solid fa-comment-dots"></i><span>رسائل</span></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-user"></i><span>حسابي</span></a>
+        <a href="#" class="nav-item active"><i class="fa-solid fa-house-chimney"></i><br>الرئيسية</a>
+        <a href="#" class="nav-item" onclick="openLogin()"><i class="fa-solid fa-plus-circle"></i><br>أضف مهنتك</a>
+        <a href="#" class="nav-item" onclick="openLogin()"><i class="fa-solid fa-message"></i><br>دردشة</a>
+        <a href="#" class="nav-item" onclick="openLogin()"><i class="fa-solid fa-user-circle"></i><br>حسابي</a>
     </nav>
 
     <script>
-        const API_URL = 'https://omran-backend-1.onrender.com/api/pros';
+        const API_URL = 'https://omran-backend-1.onrender.com/api';
 
-        async function fetchPros() {
-            try {
-                const response = await fetch(API_URL);
-                const pros = await response.json();
-                renderPros(pros);
-            } catch (error) {
-                console.error('Error fetching pros:', error);
-                document.getElementById('prosList').innerHTML = '<p style="text-align:center; color:red;">فشل الاتصال بالسيرفر</p>';
-            }
-        }
+        // وظائف فتح النوافذ
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        function renderPros(pros) {
-            const list = document.getElementById('prosList');
-            list.innerHTML = pros.map(pro => `
-                <div class="pro-card">
-                    <div class="avatar"><i class="fa-solid fa-user-gear"></i></div>
-                    <div class="pro-info">
-                        <h3>${pro.name} ${pro.verified ? '<i class="fa-solid fa-circle-check" style="color:#1a56db; font-size:0.9rem;"></i>' : ''}</h3>
-                        <p>${pro.spec || 'حرفي'} • ${pro.city} • ${pro.village}</p>
-                        <span class="status ${pro.isBusy ? 'busy' : 'online'}">
-                            ${pro.isBusy ? '🔴 مشغول حالياً' : '🟢 متاح للعمل'}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.onload = fetchPros;
-    </script>
-</body>
-</html>
+        function openLogin() {
+            const content = document.getElementById('authContent');
+            content.innerHTML = `
+                <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
+                <h2 style="text-align:center;">تسجيل الدخول</h2>
+                <input type="tel"
