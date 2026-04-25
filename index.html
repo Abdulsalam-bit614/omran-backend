@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>عُمران – سوريا</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --blue:#1a56db;--blue-dk:#1241a8;--blue-lt:#e8f0fe;--blue-mid:#3b82f6;
+  --green:#22c55e;--wa:#25d366;--red:#ef4444;--amber:#f59e0b;--purple:#7c3aed;
+  --bg:#f0f4f8;--white:#fff;
+  --gray:#f1f5f9;--gray2:#e2e8f0;--gray3:#cbd5e1;--gray4:#94a3b8;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --r:16px;--rsm:12px;--rxs:8px;
+  --shadow:0 4px 24px rgba(15,23,42,.08);
+  --shadow-blue:0 4px 20px rgba(26,86,219,.18);
+}
+html,body{height:100%;font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;font-size:15px}
+input,textarea,select,button{font-family:'Tajawal',sans-serif}
+a{text-decoration:none;color:inherit}
+#app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--white);position:relative;overflow:hidden}
+.page{display:none;flex-direction:column;min-height:100vh}
+.page.active{display:flex;animation:pageIn .2s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tb{background:var(--blue);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:60;flex-shrink:0}
+.tb-brand{display:flex;flex-direction:column}
+.tb-logo{color:#fff;font-size:21px;font-weight:900;letter-spacing:-0.5px;line-height:1}
+.tb-city{color:rgba(255,255,255,.6);font-size:11px;margin-top:1px}
+.f1{flex:1}
+.btn-back{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:var(--rxs);padding:7px 12px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-tb{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:var(--rxs);padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;position:relative}
+.btn-tb-solid{background:#fff;border:none;color:var(--blue);border-radius:var(--rxs);padding:7px 14px;font-size:14px;font-weight:800;cursor:pointer}
+.btn{border:none;border-radius:var(--rsm);padding:14px 20px;font-size:15px;font-weight:800;cursor:pointer;display:block;width:100%;text-align:center;transition:all .15s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:var(--shadow-blue)}
+.btn-secondary{background:var(--gray);color:var(--text);border:1.5px solid var(--gray2)}
+.btn-wa{background:var(--wa);color:#fff;border:none;border-radius:var(--rsm);padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-call{background:var(--blue);color:#fff;border:none;border-radius:var(--rsm);padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:var(--rxs)}
+.fg{margin-bottom:14px}
+.fl{font-size:14px;font-weight:700;color:var(--text);margin-bottom:7px;display:block}
+.fi{width:100%;border:1.5px solid var(--gray2);border-radius:var(--rsm);padding:12px 14px;font-size:15px;color:var(--text);outline:none;transition:all .15s;background:#fff}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+.fi::placeholder{color:var(--text3)}
+textarea.fi{resize:none;min-height:80px;line-height:1.6}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath fill='%2394a3b8' d='M7 10L0 0h14z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 14px center;padding-left:36px}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--gray2);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;overflow:hidden}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;gap:3px}
+.b-green{background:#dcfce7;color:#15803d}
+.b-red{background:#fee2e2;color:#dc2626}
+.b-blue{background:var(--blue-lt);color:var(--blue)}
+.b-gray{background:var(--gray);color:var(--text2)}
+.b-amber{background:#fef3c7;color:#92400e}
+.stars{display:flex;gap:2px}
+.star{font-size:18px;cursor:pointer;transition:transform .1s;color:#e2e8f0;line-height:1}
+.star.on{color:#f59e0b}
+.star:hover{transform:scale(1.2)}
+.star-sm{font-size:14px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sb{background:var(--gray);border:1.5px solid transparent;border-radius:var(--rxs);padding:11px 8px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s}
+.sb.on{background:var(--blue-lt);border-color:var(--blue);color:var(--blue);font-weight:700}
+.tabs{display:flex;background:var(--gray);border-radius:var(--rsm);padding:4px;gap:4px}
+.tab{flex:1;padding:9px 4px;border-radius:var(--rxs);border:none;background:transparent;font-size:13px;font-weight:700;color:var(--text3);cursor:pointer;transition:all .15s}
+.tab.on{background:#fff;color:var(--blue);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.sbar{display:flex;align-items:center;background:#fff;border:1.5px solid var(--gray2);border-radius:var(--rsm);padding:11px 14px;gap:9px;transition:border-color .15s}
+.sbar:focus-within{border-color:var(--blue)}
+.sbar input{border:none;outline:none;flex:1;font-size:15px;color:var(--text);direction:rtl;background:transparent}
+.sbar input::placeholder{color:var(--text3)}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.st{font-size:17px;font-weight:800;color:var(--text)}
+.sl{color:var(--blue);font-size:13px;font-weight:700;background:none;border:none;cursor:pointer}
+.pc{background:#fff;border-radius:var(--r);border:1px solid var(--gray2);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.pc:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.verified-badge{background:var(--blue-lt);color:var(--blue);font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
+.ci{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--gray2);transition:background .15s}
+.ci:hover{background:var(--gray)}
+.msgs-area{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:#f8fafc}
+.bbl{max-width:82%;padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.55;word-break:break-word}
+.bbl.out{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-left-radius:4px}
+.bbl.in{background:#fff;color:var(--text);align-self:flex-start;border:1px solid var(--gray2);border-bottom-right-radius:4px}
+.bt{font-size:10px;opacity:.6;margin-top:4px;text-align:left}
+.vb{display:flex;align-items:center;gap:8px;min-width:165px}
+.pb{width:34px;height:34px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;flex-shrink:0}
+.out .pb{background:rgba(255,255,255,.22);color:#fff}
+.in .pb{background:var(--blue);color:#fff}
+.wv{flex:1;height:28px;display:flex;align-items:center;gap:2px}
+.wv span{width:3px;border-radius:2px;flex-shrink:0}
+.out .wv span{background:rgba(255,255,255,.5)}
+.in .wv span{background:var(--blue-mid);opacity:.55}
+.ir{display:flex;align-items:flex-end;gap:8px;padding:10px 12px;border-top:1px solid var(--gray2);background:#fff;flex-shrink:0}
+.mi{flex:1;border:1.5px solid var(--gray2);border-radius:22px;padding:10px 14px;font-size:14px;outline:none;direction:rtl;resize:none;max-height:90px;line-height:1.45;transition:border-color .15s}
+.mi:focus{border-color:var(--blue)}
+.sb2{width:40px;height:40px;border-radius:50%;background:var(--blue);border:none;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.rb{width:40px;height:40px;border-radius:50%;background:var(--gray);border:none;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s}
+.rb.on{background:#fee2e2;animation:pulse 1s infinite}
+.rec-bar{display:none;align-items:center;gap:10px;padding:9px 14px;background:#fef2f2;border-top:1px solid #fecaca;flex-shrink:0}
+.rec-bar.show{display:flex}
+.rdot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.tog-track{width:50px;height:28px;border-radius:14px;position:relative;transition:background .2s;flex-shrink:0;cursor:pointer}
+.tog-track.on{background:var(--blue)}
+.tog-track.off{background:var(--gray3)}
+.tog-thumb{position:absolute;top:3px;right:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tog-track.on .tog-thumb{transform:translateX(-22px)}
+.tyb{background:#fff;border:2px solid var(--gray2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;margin-bottom:10px;text-align:right;transition:all .15s}
+.tyb:hover{border-color:var(--gray3)}
+.tyb.on{border-color:var(--blue);background:var(--blue-lt)}
+.tyb .chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--gray2);margin-right:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.tyb.on .chk{background:var(--blue);border-color:var(--blue);color:#fff}
+.ph{background:linear-gradient(160deg,var(--blue-dk) 0%,var(--blue-mid) 100%);padding:28px 18px 22px;text-align:center}
+.pn{color:#fff;font-size:21px;font-weight:800;margin-top:10px}
+.pr{color:rgba(255,255,255,.72);font-size:14px;margin-top:3px}
+.sr{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--gray2)}
+.sb3{text-align:center;padding:14px 8px}
+.sn{font-size:22px;font-weight:900;color:var(--blue);line-height:1}
+.slb{font-size:12px;color:var(--text3);margin-top:3px}
+.rev-card{background:var(--gray);border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px}
+.hero{background:linear-gradient(160deg,var(--blue-dk) 0%,var(--blue-mid) 100%);padding:24px 18px 32px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;left:-40px;width:200px;height:200px;background:rgba(255,255,255,.04);border-radius:50%}
+.hero-title{color:#fff;font-size:26px;font-weight:900;letter-spacing:-.5px;line-height:1.15}
+.hero-sub{color:rgba(255,255,255,.78);font-size:14px;margin-top:6px;margin-bottom:18px}
+.bnav{display:flex;background:#fff;border-top:1px solid var(--gray2);position:sticky;bottom:0;z-index:40;flex-shrink:0}
+.nb{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;transition:color .15s;position:relative}
+.nb.on{color:var(--blue)}
+.nb::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--blue);border-radius:0 0 2px 2px;transition:width .2s}
+.nb.on::after{width:28px}
+.ni{font-size:22px;line-height:1}
+.nb-badge{position:absolute;top:6px;right:calc(50% - 16px);background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.mo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:200;align-items:flex-end;justify-content:center}
+.mo.show{display:flex}
+.mb{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:20px 18px 36px;animation:mbUp .25s ease}
+@keyframes mbUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mh{width:40px;height:4px;background:var(--gray2);border-radius:2px;margin:0 auto 16px}
+.sy{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.odot{position:absolute;bottom:1px;left:1px;width:11px;height:11px;border-radius:50%;border:2px solid #fff}
+.prog-bar{height:6px;background:var(--gray2);border-radius:3px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .3s}
+.admin-row{background:#fff;border:1px solid var(--gray2);border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.hscroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.spec-chip{flex-shrink:0;background:#fff;border:1.5px solid var(--gray2);border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.spec-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.stat-card{background:var(--blue-lt);border-radius:var(--rsm);padding:14px;display:flex;align-items:center;gap:12px}
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:52px;margin-bottom:12px}
+.empty-text{font-size:15px;font-weight:700;color:var(--text2);margin-bottom:6px}
+/* Photo gallery */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:10px}
+.photo-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;background:var(--gray2)}
+.photo-add{width:100%;aspect-ratio:1;border:2px dashed var(--gray3);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;color:var(--gray3);transition:all .15s}
+.photo-add:hover{border-color:var(--blue);color:var(--blue)}
+/* Color picker */
+.color-swatch{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0}
+.color-swatch.active{border-color:#fff;box-shadow:0 0 0 3px var(--blue)}
+/* Avatar upload */
+.av-upload{position:relative;display:inline-block;cursor:pointer}
+.av-upload-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;opacity:0;transition:opacity .2s}
+.av-upload:hover .av-upload-overlay{opacity:1}
+
+/* ══ LOADING SPINNER ══ */
+.btn-loading{position:relative;color:transparent!important;pointer-events:none}
+.btn-loading::after{content:’’;position:absolute;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ══ PASSWORD TOGGLE ══ */
+.pass-wrap{position:relative}
+.pass-wrap .fi{padding-left:42px}
+.pass-toggle{position:absolute;left:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(–text3);padding:4px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:color .15s}
+.pass-toggle:hover{color:var(–blue)}
+
+/* ══ DASHBOARD ══ */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.dash-card{background:#fff;border:1px solid var(–gray2);border-radius:var(–rsm);padding:14px;text-align:center;box-shadow:var(–shadow)}
+.dash-num{font-size:28px;font-weight:900;color:var(–blue);line-height:1}
+.dash-lbl{font-size:12px;color:var(–text3);margin-top:3px}
+.dash-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(–gray2)}
+.dash-row:last-child{border-bottom:none}
+.dash-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.dash-bar-wrap{background:var(–gray);border-radius:4px;height:8px;overflow:hidden;margin-top:4px}
+.dash-bar{height:100%;border-radius:4px;transition:width .4s ease}
+.chart-wrap{background:#fff;border:1px solid var(–gray2);border-radius:var(–rsm);padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.chart-title{font-size:14px;font-weight:800;margin-bottom:12px;color:var(–text)}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s ease}
+.bar-label{font-size:10px;color:var(–text3);text-align:center;line-height:1.3}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dash-spin{width:28px;height:28px;border:3px solid var(–gray2);border-top-color:var(–blue);border-radius:50%;animation:spin .7s linear infinite;margin:30px auto}
+
+/* ══ DASHBOARD PRO ══ */
+.db-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.db-tab{background:var(–gray);border:1.5px solid transparent;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:var(–text2);cursor:pointer;transition:all .15s}
+.db-tab.on{background:var(–blue-lt);border-color:var(–blue);color:var(–blue)}
+.db-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.db-stat{background:#fff;border:1px solid var(–gray2);border-radius:var(–rsm);padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.db-stat:hover{transform:translateY(-2px);box-shadow:var(–shadow)}
+.db-stat-icon{font-size:20px;margin-bottom:8px}
+.db-stat-num{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px}
+.db-stat-lbl{font-size:11px;color:var(–text3);font-weight:600}
+.db-stat-bar{position:absolute;bottom:0;right:0;left:0;height:3px;border-radius:0 0 var(–rsm) var(–rsm)}
+.db-section{margin-bottom:16px}
+.db-section-title{font-size:13px;font-weight:800;color:var(–text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.db-hbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.db-hbar-label{font-size:12px;color:var(–text2);min-width:80px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-hbar-track{flex:1;background:var(–gray);border-radius:4px;height:7px;overflow:hidden}
+.db-hbar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.db-hbar-val{font-size:12px;font-weight:700;min-width:20px;text-align:left}
+.db-top-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(–gray2)}
+.db-top-item:last-child{border-bottom:none}
+.db-medal{font-size:18px;min-width:24px;text-align:center}
+.db-top-name{font-weight:700;font-size:13px}
+.db-top-spec{font-size:11px;color:var(–text3)}
+.db-top-score{font-size:14px;font-weight:900;color:var(–amber)}
+.db-pie-svg{display:block;margin:0 auto 10px}
+.db-legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.db-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.db-legend-dot{width:8px;height:8px;border-radius:50%}
+.db-req-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(–gray2);font-size:12px}
+.db-req-row:last-child{border-bottom:none}
+.db-req-spec{flex:1;font-weight:600}
+.db-req-area{color:var(–text2);font-size:11px}
+.db-activity{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(–gray2)}
+.db-activity:last-child{border-bottom:none}
+.db-act-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.db-act-text{flex:1;font-size:12px;font-weight:600}
+.db-act-time{font-size:10px;color:var(–text3)}
+
+/* ══ إصلاح أزرار الاتصال وواتساب ══ */
+.btn-call, .btn-wa {
+-webkit-tap-highlight-color: transparent;
+user-select: none;
+cursor: pointer;
+}
+.btn-call:active { background: #1241a8 !important; transform: scale(0.97); }
+.btn-wa:active { background: #16a34a !important; transform: scale(0.97); }
+
+/* ══ شريط الإعلانات ══ */
+.ad-bar {
+background: linear-gradient(135deg,#1241a8,#1a56db);
+color: #fff;
+padding: 9px 0;
+overflow: hidden;
+position: relative;
+}
+.ad-bar::before,.ad-bar::after {
+content:’’;position:absolute;top:0;width:50px;height:100%;z-index:2;
+}
+.ad-bar::before { right:0; background:linear-gradient(to left,#1241a8,transparent); }
+.ad-bar::after  { left:0;  background:linear-gradient(to right,#1241a8,transparent); }
+.ad-track {
+display:flex;gap:35px;
+animation:scroll-ad 25s linear infinite;
+white-space:nowrap;
+}
+.ad-track:hover { animation-play-state:paused; }
+@keyframes scroll-ad {
+0%   { transform:translateX(0); }
+100% { transform:translateX(-50%); }
+}
+.ad-item {
+display:inline-flex;align-items:center;gap:7px;
+font-size:13px;font-weight:700;
+}
+.ad-item .tag {
+background:rgba(255,255,255,.2);
+padding:1px 7px;border-radius:15px;font-size:11px;
+}
+
+/* ══ تصفح — شاشة كاملة ══ */
+#pg-search { padding: 0; }
+#pg-search .search-inner { padding: 16px; }
+#browse-list { padding: 0 16px 16px; }
+
+/* ══ نموذج تسجيل الدخول ══ */
+.auth-toggle {
+display:flex;background:var(–bg);border-radius:10px;
+padding:4px;margin-bottom:14px;
+}
+.auth-toggle button {
+flex:1;padding:9px;border:none;border-radius:8px;
+font-family:inherit;font-size:14px;font-weight:700;
+cursor:pointer;background:none;color:var(–text3);transition:.2s;
+}
+.auth-toggle button.on {
+background:#fff;color:var(–blue);
+box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+</style>
+
+</head>
+<body>
+<div id="app">
+
+<!-- ══ شريط الإعلانات ══ -->
+
+<div class="ad-bar" id="ad-bar" style="display:none">
+  <div class="ad-track" id="ad-track"></div>
+</div>
+
+<!-- ══ TOOLBAR ══ -->
+
+<div style="background:var(--blue);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:60">
+  <div style="flex:1"><svg width="108" height="44" viewBox="0 0 108 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- بناية صغيرة (يمين) -->
+          <rect x="2" y="17" width="9" height="13" rx="1" fill="rgba(255,255,255,0.72)"/>
+          <rect x="4" y="20" width="2" height="2" fill="rgba(26,86,219,0.45)"/>
+          <rect x="7" y="20" width="2" height="2" fill="rgba(26,86,219,0.45)"/>
+          <!-- قنطرة من الصغيرة للوسطى -->
+          <path d="M11 19 Q17.5 9 24 17" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- بناية وسطى -->
+          <rect x="24" y="11" width="12" height="19" rx="1" fill="rgba(255,255,255,0.86)"/>
+          <rect x="26" y="14" width="3" height="3" fill="rgba(26,86,219,0.38)"/>
+          <rect x="31" y="14" width="3" height="3" fill="rgba(26,86,219,0.38)"/>
+          <rect x="26" y="19" width="3" height="3" fill="rgba(26,86,219,0.38)"/>
+          <rect x="31" y="19" width="3" height="3" fill="rgba(26,86,219,0.38)"/>
+          <!-- بناية كبيرة (يسار) -->
+          <rect x="39" y="4" width="15" height="26" rx="1" fill="white"/>
+          <rect x="41" y="7"  width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <rect x="47" y="7"  width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <rect x="41" y="13" width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <rect x="47" y="13" width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <rect x="41" y="19" width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <rect x="47" y="19" width="4" height="3" fill="rgba(26,86,219,0.3)"/>
+          <!-- خط الأرض -->
+          <line x1="1" y1="30.5" x2="56" y2="30.5" stroke="rgba(255,255,255,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <!-- نص عُمران تحت البنايات من اليمين لليسار -->
+          <text x="2" y="42" font-family="Tajawal, Arial, sans-serif" font-size="13" font-weight="900" fill="rgba(255,255,255,0.95)" letter-spacing="2.5">عُ  م  ر  ا  ن</text>
+        </svg></div>
+  <button id="admin-btn" onclick="showPage('pg-admin')" style="display:none;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer">⚙️</button>
+  <button onclick="showPage('pg-profile')" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:7px 12px;font-size:15px;cursor:pointer"><i class="fa-solid fa-circle-user"></i></button>
+  <div class="sbar" style="max-width:180px;padding:7px 12px">
+    <i class="fa-solid fa-magnifying-glass" style="color:var(--text3)"></i>
+    <input type="text" id="main-search" placeholder="ابحث..." oninput="renderPros()">
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+
+<div id="pg-home" class="page active">
+  <div style="padding:14px 16px 0">
+    <div class="hscroll" id="spec-chips" style="margin-bottom:12px">
+      <div class="spec-chip on" onclick="setSpec('',this)">✨ الكل</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <select class="fi" id="city-filter" onchange="onCityChange()" style="flex:1">
+        <option value="">كل المحافظات</option>
+      </select>
+      <select class="fi" id="village-filter" onchange="renderPros()" style="flex:1;display:none">
+        <option value="">كل القرى</option>
+      </select>
+    </div>
+  </div>
+  <div id="pros-list" style="padding:0 16px"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">جاري تحميل البيانات...</div></div></div>
+</div>
+
+<!-- ══ SEARCH ══ -->
+
+<div id="pg-search" class="page">
+  <div class="search-inner">
+    <div class="fg"><label class="fl">التخصص</label>
+      <select class="fi" id="br-spec" onchange="renderBrowse()"><option value="">الكل</option></select>
+    </div>
+    <div class="fg"><label class="fl">المحافظة</label>
+      <select class="fi" id="br-city" onchange="onBrCityChange()"><option value="">الكل</option></select>
+    </div>
+    <select class="fi" id="br-village" onchange="renderBrowse()" style="display:none">
+      <option value="">كل القرى</option>
+    </select>
+  </div>
+  <div id="browse-list"></div>
+</div>
+
+<!-- ══ ADD ══ -->
+
+<div id="pg-add" class="page">
+  <div style="padding:16px">
+    <div id="add-login-msg" style="display:none">
+      <div class="empty"><div class="empty-icon">🔐</div>
+        <div class="empty-text">يجب تسجيل الدخول أولاً</div>
+        <button class="btn btn-primary" onclick="showPage('pg-profile')" style="margin-top:14px">تسجيل الدخول</button>
+      </div>
+    </div>
+    <div id="add-form">
+      <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" id="add-name" placeholder="اسمك الكامل"></div>
+      <div class="fg"><label class="fl">التخصص</label>
+        <select class="fi" id="add-spec">
+          <option value="بلاط وسيراميك">بلاط وسيراميك</option>
+          <option value="دهان وديكور">دهان وديكور</option>
+          <option value="كهرباء">كهرباء</option>
+          <option value="صحي وسباكة">صحي وسباكة</option>
+          <option value="بناء وترميم">بناء وترميم</option>
+          <option value="نجارة">نجارة</option>
+          <option value="محل مواد بناء">محل مواد بناء</option>
+          <option value="هندسة مدنية">هندسة مدنية</option>
+          <option value="مقاولات">مقاولات</option>
+          <option value="جبس وديكور">جبس وديكور</option>
+          <option value="حديد وألمنيوم">حديد وألمنيوم</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">المحافظة</label><select class="fi" id="add-city" onchange="onAddCityChange()"><option value="">اختر</option></select></div>
+      <select class="fi" id="add-village" style="display:none"><option value="">اختر القرية</option></select>
+      <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" id="add-phone" type="tel" placeholder="09xxxxxxxx"></div>
+      <div class="fg"><label class="fl">واتساب</label><input class="fi" id="add-wa" type="tel" placeholder="09xxxxxxxx"></div>
+      <div class="fg"><label class="fl">وصف عملك</label><textarea class="fi" id="add-desc" placeholder="اكتب وصفاً مختصراً..."></textarea></div>
+      <div class="fg"><label class="fl">سنوات الخبرة</label>
+        <select class="fi" id="add-exp">
+          <option value="أقل من سنة">أقل من سنة</option>
+          <option value="1-5 سنوات">1-5 سنوات</option>
+          <option value="5-10 سنوات">5-10 سنوات</option>
+          <option value="10-15 سنة">10-15 سنة</option>
+          <option value="أكثر من 15 سنة">أكثر من 15 سنة</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="btn-add" onclick="submitPro()">نشر الملف المهني 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAT ══ -->
+
+<div id="pg-chat" class="page">
+  <div class="empty" style="margin-top:40px">
+    <div class="empty-icon">💬</div>
+    <div class="empty-text">لا توجد محادثات حالياً</div>
+  </div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+
+<div id="pg-profile" class="page">
+  <div id="auth-section" style="padding:16px">
+
+```
+<!-- تبديل دخول/تسجيل -->
+<div class="auth-toggle" id="auth-tabs">
+  <button class="on" id="tab-login-btn" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+  <button id="tab-reg-btn" onclick="switchAuthTab('register')">حساب جديد</button>
+</div>
+
+<!-- نموذج الدخول -->
+<div id="login-form">
+  <div class="fg">
+    <label class="fl">رقم الهاتف أو البريد الإلكتروني</label>
+    <input class="fi" id="log-id" placeholder="09xxxxxxxx أو email@example.com">
+  </div>
+  <div class="fg pass-wrap">
+    <label class="fl">كلمة المرور</label>
+    <input class="fi" type="password" id="log-pass" placeholder="••••••••">
+    <button class="pass-toggle" onclick="togglePass('log-pass',this)">👁</button>
+  </div>
+  <button class="btn btn-primary btn-loading-wrap" id="btn-login" onclick="doLogin()">دخول</button>
+  <p style="text-align:center;margin-top:10px;font-size:14px">
+    <span style="color:var(--blue);cursor:pointer;font-weight:700" onclick="showSection('forgot-form')">نسيت كلمة المرور؟</span>
+  </p>
+</div>
+
+<!-- نموذج التسجيل -->
+<div id="register-form" style="display:none">
+  <div class="fg">
+    <label class="fl">الاسم الكامل</label>
+    <input class="fi" id="reg-name" placeholder="اسمك الكامل">
+  </div>
+  <div class="fg">
+    <label class="fl">رقم الهاتف <span style="color:var(--text3);font-weight:400">(اختياري)</span></label>
+    <input class="fi" id="reg-phone" type="tel" placeholder="09xxxxxxxx">
+  </div>
+  <div class="fg">
+    <label class="fl">البريد الإلكتروني <span style="color:var(--text3);font-weight:400">(اختياري)</span></label>
+    <input class="fi" type="email" id="reg-email" placeholder="email@example.com">
+  </div>
+  <div class="fg pass-wrap">
+    <label class="fl">كلمة المرور</label>
+    <input class="fi" type="password" id="reg-pass" placeholder="6 أحرف على الأقل">
+    <button class="pass-toggle" onclick="togglePass('reg-pass',this)">👁</button>
+  </div>
+  <div class="fg">
+    <label class="fl">نوع الحساب</label>
+    <select class="fi" id="reg-type">
+      <option value="client">عميل — أبحث عن خدمة</option>
+      <option value="pro">معلم حرفي</option>
+      <option value="pro">محل مواد بناء</option>
+      <option value="pro">مهندس</option>
+      <option value="pro">متعهد</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" id="btn-register" onclick="doRegister()">إنشاء الحساب</button>
+</div>
+
+<!-- نسيت كلمة المرور -->
+<div id="forgot-form" style="display:none">
+  <h3 style="margin-bottom:16px;font-size:1rem">إعادة تعيين كلمة المرور</h3>
+  <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" id="forgot-phone" placeholder="09xxxxxxxx"></div>
+  <div class="fg pass-wrap"><label class="fl">كلمة المرور الجديدة</label><input class="fi" type="password" id="forgot-newpass"><button class="pass-toggle" onclick="togglePass('forgot-newpass',this)">👁</button></div>
+  <div class="fg pass-wrap"><label class="fl">تأكيد كلمة المرور</label><input class="fi" type="password" id="forgot-confirm"><button class="pass-toggle" onclick="togglePass('forgot-confirm',this)">👁</button></div>
+  <button class="btn btn-primary" id="btn-forgot" onclick="resetPassword()">تعيين كلمة المرور</button>
+  <p style="text-align:center;margin-top:10px;font-size:14px"><span style="color:var(--blue);cursor:pointer" onclick="switchAuthTab('login')">← رجوع للدخول</span></p>
+</div>
+```
+
+  </div>
+
+  <!-- مسجل -->
+
+  <div id="user-section" style="display:none">
+    <div class="ph">
+      <div class="av-upload" onclick="document.getElementById('avatar-input').click()">
+        <div class="av" id="profile-av" style="width:72px;height:72px;margin:0 auto;font-size:2rem;background:rgba(255,255,255,.2);color:#fff"></div>
+        <div class="av-upload-overlay"><i class="fa-solid fa-camera"></i></div>
+      </div>
+      <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="onAvatarChange(this)">
+      <div class="pn" id="profile-name"></div>
+      <div class="pr" id="profile-type"></div>
+    </div>
+    <div style="padding:16px;border-bottom:1px solid var(--gray2)">
+      <div class="sh"><span class="st">صور أعمالي</span><span id="photos-count" style="font-size:13px;color:var(--text3)">0/50</span></div>
+      <div class="photo-grid" id="my-photos-grid"></div>
+      <div class="photo-add" onclick="document.getElementById('photos-input').click()" style="margin-top:8px">+</div>
+      <input type="file" id="photos-input" accept="image/*" multiple style="display:none" onchange="onPhotosChange(this)">
+    </div>
+    <div style="padding:16px;border-bottom:1px solid var(--gray2)">
+      <div class="st" style="margin-bottom:14px">تغيير كلمة المرور</div>
+      <div class="fg pass-wrap"><input class="fi" type="password" id="old-pass" placeholder="كلمة المرور الحالية"><button class="pass-toggle" onclick="togglePass('old-pass',this)">👁</button></div>
+      <div class="fg pass-wrap"><input class="fi" type="password" id="new-pass" placeholder="كلمة المرور الجديدة"><button class="pass-toggle" onclick="togglePass('new-pass',this)">👁</button></div>
+      <div class="fg pass-wrap"><input class="fi" type="password" id="confirm-pass" placeholder="تأكيد كلمة المرور الجديدة"><button class="pass-toggle" onclick="togglePass('confirm-pass',this)">👁</button></div>
+      <button class="btn btn-secondary" onclick="changePassword()">حفظ كلمة المرور</button>
+    </div>
+    <div style="padding:16px">
+      <button class="btn" style="background:var(--red);color:#fff" onclick="doLogout()">تسجيل الخروج</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DETAIL ══ -->
+
+<div id="pg-detail" class="page">
+  <div style="background:var(--blue);padding:12px 16px;display:flex;align-items:center;gap:10px">
+    <button class="btn-back" onclick="showPage('pg-home')">← رجوع</button>
+  </div>
+  <div id="detail-header" style="background:linear-gradient(160deg,var(--blue-dk),var(--blue-mid));padding:20px 16px;color:white"></div>
+  <div id="detail-body" style="padding:16px"></div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+
+<div id="pg-admin" class="page">
+  <div style="padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span class="st">لوحة الأدمن ⚙️</span>
+      <button class="btn-back" onclick="showPage('pg-home')">رجوع</button>
+    </div>
+    <div id="admin-list"></div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+
+<nav class="bnav">
+  <button class="nb on" id="nb-home" onclick="showPage('pg-home')"><span class="ni">🏠</span>الرئيسية</button>
+  <button class="nb" id="nb-search" onclick="showPage('pg-search')"><span class="ni">🔍</span>تصفح</button>
+  <button class="nb" id="nb-add" onclick="showPage('pg-add')" style="position:relative">
+    <div style="position:absolute;top:-22px;background:var(--blue);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.6rem;box-shadow:0 6px 20px rgba(26,86,219,.35);border:4px solid var(--bg)">＋</div>
+    <span style="margin-top:28px;font-size:11px;font-weight:700">إضافة</span>
+  </button>
+  <button class="nb" id="nb-chat" onclick="showPage('pg-chat')"><span class="ni">💬</span>رسائل</button>
+  <button class="nb" id="nb-profile" onclick="showPage('pg-profile')"><span class="ni">👤</span>حسابي</button>
+</nav>
+
+</div>
+<script>const API = '/api';
+
+// ══ تبديل تسجيل دخول / حساب جديد ══
+function switchAuthTab(tab) {
+const lf = document.getElementById(‘login-form’);
+const rf = document.getElementById(‘register-form’);
+const ff = document.getElementById(‘forgot-form’);
+const lb = document.getElementById(‘tab-login-btn’);
+const rb = document.getElementById(‘tab-reg-btn’);
+if (!lf) return;
+lf.style.display = tab === ‘login’ ? ‘’ : ‘none’;
+rf.style.display = tab === ‘register’ ? ‘’ : ‘none’;
+if (ff) ff.style.display = ‘none’;
+if (lb) lb.classList.toggle(‘on’, tab === ‘login’);
+if (rb) rb.classList.toggle(‘on’, tab === ‘register’);
+}
+
+// ══ شريط الإعلانات ══
+async function initAdBar() {
+try {
+const res = await fetch(`${API}/ads`);
+const ads = await res.json();
+const featured = professionals.filter(p => p.isFeatured);
+let items = ‘’;
+if (Array.isArray(ads)) {
+ads.forEach(a => items += `<div class="ad-item">📢 <span class="tag">إعلان</span> ${a.name} — ${a.text}</div>`);
+}
+featured.forEach(p => items += `<div class="ad-item">⭐ <span class="tag">مميز</span> ${p.name} — ${p.spec} — ${[p.village,p.city].filter(Boolean).join(' - ')||''}</div>`);
+if (!items) return;
+const bar = document.getElementById(‘ad-bar’);
+if (!bar) return;
+bar.style.display = ‘’;
+document.getElementById(‘ad-track’).innerHTML = items + items;
+} catch(e) {}
+}
+
+// ── ألوان التخصصات ──
+const TBG={worker:’#eef2ff’,store:’#f0fdf4’,engineer:’#fef3c7’,contractor:’#fdf2f8’,client:’#f1f5f9’,admin:’#0f172a’};
+const TCL={worker:’#1a56db’,store:’#15803d’,engineer:’#92400e’,contractor:’#7c3aed’,client:’#475569’,admin:’#fff’};
+const TEM={worker:‘🔨’,store:‘🏪’,engineer:‘📐’,contractor:‘🏗️’,client:‘👤’,admin:‘⚙️’};
+
+function avgRating(p){ return p.reviews?.length ? p.reviews.reduce((s,r)=>s+r.stars,0)/p.reviews.length : null; }
+function openChatWith(id){ showPage(‘pg-chat’); }
+
+const SYRIA={
+‘دمشق’:[‘المزة’,‘كفرسوسة’,‘البرامكة’,‘ركن الدين’,‘باب توما’,‘المهاجرين’,‘دمر’,‘قدسيا’,‘المالكي’],
+‘ريف دمشق’:[‘دوما’,‘عربين’,‘زملكا’,‘جرمانا’,‘صيدنايا’,‘يبرود’,‘الزبداني’,‘معضمية الشام’,‘داريا’,‘قطنا’,‘النبك’,‘سعسع’],
+‘حلب’:[‘العزيزية’,‘الشهباء’,‘السليمانية’,‘إعزاز’,‘منبج’,‘الباب’,‘جرابلس’,‘عفرين’,‘عين العرب’,‘أعزاز’],
+‘درعا’:[‘درعا البلد’,‘درعا المحطة’,‘نوى’,‘المزيريب’,‘الصنمين’,‘طفس’,‘بصرى الشام’,‘إنخل’,‘الحراك’,‘جاسم’,‘داعل’,‘عتمان’,‘ازرع’,‘خربة غزالة’],
+‘حمص’:[‘الوعر’,‘الزهراء’,‘الرستن’,‘تلبيسة’,‘القصير’,‘تدمر’,‘تلكلخ’,‘المخرم’,‘حمص القديمة’],
+‘حماة’:[‘مصياف’,‘السلمية’,‘محردة’,‘صوران’,‘مورك’,‘اللطامنة’,‘حماة القديمة’],
+‘اللاذقية’:[‘جبلة’,‘القرداحة’,‘الحفة’,‘سلمى’,‘اللاذقية القديمة’],
+‘طرطوس’:[‘صافيتا’,‘بانياس’,‘الشيخ بدر’,‘دريكيش’,‘القدموس’],
+‘إدلب’:[‘معرة النعمان’,‘أريحا’,‘جسر الشغور’,‘سرمين’,‘بنش’,‘سرمدا’,‘أطمة’],
+‘دير الزور’:[‘الميادين’,‘البوكمال’,‘الأشارة’,‘موحسن’],
+‘الرقة’:[‘الطبقة’,‘تل أبيض’,‘سلوك’],
+‘الحسكة’:[‘القامشلي’,‘المالكية’,‘رأس العين’,‘عامودا’,‘الشدادي’],
+‘السويداء’:[‘شهبا’,‘صلخد’,‘القريا’,‘ضمير’],
+‘القنيطرة’:[‘فيق’,‘البعث’,‘خان أرنبة’],
+};
+
+let specialties=[
+{id:‘بلاط وسيراميك’,icon:‘🔲’,type:‘worker’},
+{id:‘دهان وديكور’,icon:‘🖌️’,type:‘worker’},
+{id:‘كهرباء’,icon:‘⚡’,type:‘worker’},
+{id:‘صحي وسباكة’,icon:‘🚰’,type:‘worker’},
+{id:‘بناء وترميم’,icon:‘🏗️’,type:‘worker’},
+{id:‘جبس وديكور’,icon:‘🏛️’,type:‘worker’},
+{id:‘حديد وألمنيوم’,icon:‘🔩’,type:‘worker’},
+{id:‘نجارة’,icon:‘🪵’,type:‘worker’},
+{id:‘محل مواد بناء’,icon:‘🏪’,type:‘store’},
+{id:‘هندسة مدنية’,icon:‘📐’,type:‘engineer’},
+{id:‘مقاولات’,icon:‘🏢’,type:‘contractor’},
+];
+
+let professionals=[
+{id:1,name:‘أبو محمد البلاط’,type:‘worker’,spec:‘بلاط وسيراميك’,desc:‘متخصص في تركيب البلاط والسيراميك لأكثر من 12 سنة.’,area:‘درعا البلد’,exp:‘10-15 سنة’,phone:‘0912345678’,wa:‘0912345678’,avail:true,verified:true,mine:false,avatar:null,photos:[],
+reviews:[{author:‘أحمد خليل’,stars:5,text:‘شغل ممتاز ونظيف’,date:‘قبل ٣ أيام’},{author:‘محمد’,stars:4,text:‘معلم شاطر’,date:‘قبل أسبوع’}]},
+{id:2,name:‘أستاذ خالد الدهان’,type:‘worker’,spec:‘دهان وديكور’,desc:‘دهان داخلي وخارجي وورق حائط.’,area:‘المزيريب’,exp:‘5-10 سنوات’,phone:‘0923456789’,wa:‘0923456789’,avail:true,verified:true,mine:false,avatar:null,photos:[],
+reviews:[{author:‘سامر’,stars:5,text:‘أحسن دهان بالمنطقة’,date:‘قبل يومين’}]},
+{id:3,name:‘معلم سامر الكهربائي’,type:‘worker’,spec:‘كهرباء’,desc:‘كهرباء منازل وتجاري وصيانة شاملة.’,area:‘نوى’,exp:‘10-15 سنة’,phone:‘0934567890’,wa:’’,avail:false,verified:true,mine:false,avatar:null,photos:[],
+reviews:[{author:‘خالد’,stars:5,text:‘سريع وأمين’,date:‘قبل ٥ أيام’}]},
+{id:4,name:‘أبو حسن الصحي’,type:‘worker’,spec:‘صحي وسباكة’,desc:‘سباكة وصحي وتركيب حمامات.’,area:‘درعا البلد’,exp:‘5-10 سنوات’,phone:‘0945678901’,wa:‘0945678901’,avail:true,verified:false,mine:false,avatar:null,photos:[],reviews:[]},
+{id:5,name:‘مواد البناء الوطني’,type:‘store’,spec:‘محل مواد بناء’,desc:‘جميع مواد البناء مع توصيل مجاني.’,area:‘شارع الثورة’,exp:‘أكثر من 15 سنة’,phone:‘0956789012’,wa:‘0956789012’,avail:true,verified:true,mine:false,avatar:null,photos:[],
+reviews:[{author:‘عميل’,stars:4,text:‘أسعار معقولة’,date:‘قبل ٣ أيام’}]},
+{id:6,name:‘م. أحمد الحايك’,type:‘engineer’,spec:‘هندسة مدنية’,desc:‘تصميم منازل وإشراف هندسي.’,area:‘درعا’,exp:‘أكثر من 15 سنة’,phone:‘0967890123’,wa:‘0967890123’,avail:true,verified:true,mine:false,avatar:null,photos:[],
+reviews:[{author:‘أبو سامر’,stars:5,text:‘مهندس محترف’,date:‘قبل أسبوعين’}]},
+];
+
+let curUser = null, curSpec = ‘’;
+
+// ══ التنقل ══
+function showPage(id) {
+document.querySelectorAll(’.page’).forEach(p => p.classList.remove(‘active’));
+document.querySelectorAll(’.nb’).forEach(n => n.classList.remove(‘on’));
+document.getElementById(id).classList.add(‘active’);
+const map = {‘pg-home’:‘nb-home’,‘pg-search’:‘nb-search’,‘pg-add’:‘nb-add’,‘pg-chat’:‘nb-chat’,‘pg-profile’:‘nb-profile’};
+if (map[id]) document.getElementById(map[id]).classList.add(‘on’);
+if (id === ‘pg-add’) checkAddPage();
+if (id === ‘pg-admin’) renderAdmin();
+}
+
+// ══ إظهار إخفاء كلمة المرور ══
+function togglePass(id, btn) {
+const el = document.getElementById(id);
+el.type = el.type === ‘password’ ? ‘text’ : ‘password’;
+btn.textContent = el.type === ‘password’ ? ‘👁’ : ‘🙈’;
+}
+
+// ══ التبديل بين نماذج التسجيل ══
+function showSection(id) {
+[‘login-form’,‘forgot-form’,‘register-form’].forEach(s => {
+const el = document.getElementById(s);
+if (el) el.style.display = s === id ? ‘’ : ‘none’;
+});
+}
+
+// ══ تهيئة المحافظات ══
+function initCities() {
+const cities = Object.keys(SYRIA);
+[‘city-filter’,‘br-city’,‘add-city’].forEach(selId => {
+const sel = document.getElementById(selId);
+if (!sel) return;
+cities.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+});
+}
+
+function onCityChange() {
+const city = document.getElementById(‘city-filter’).value;
+const vSel = document.getElementById(‘village-filter’);
+vSel.innerHTML = ‘<option value="">كل القرى</option>’;
+if (city && SYRIA[city]) {
+SYRIA[city].forEach(v => vSel.innerHTML += `<option value="${v}">${v}</option>`);
+vSel.style.display = ‘’;
+} else { vSel.style.display = ‘none’; }
+renderPros();
+}
+
+function onBrCityChange() {
+const city = document.getElementById(‘br-city’).value;
+const vSel = document.getElementById(‘br-village’);
+vSel.innerHTML = ‘<option value="">كل القرى</option>’;
+if (city && SYRIA[city]) {
+SYRIA[city].forEach(v => vSel.innerHTML += `<option value="${v}">${v}</option>`);
+vSel.style.display = ‘’;
+} else { vSel.style.display = ‘none’; }
+renderBrowse();
+}
+
+function onAddCityChange() {
+const city = document.getElementById(‘add-city’).value;
+const vSel = document.getElementById(‘add-village’);
+vSel.innerHTML = ‘<option value="">اختر القرية</option>’;
+if (city && SYRIA[city]) {
+SYRIA[city].forEach(v => vSel.innerHTML += `<option value="${v}">${v}</option>`);
+vSel.style.display = ‘’;
+} else { vSel.style.display = ‘none’; }
+}
+
+// ══ تهيئة شرائح التخصص ══
+function initChips() {
+const chips = document.getElementById(‘spec-chips’);
+specialties.forEach(s => {
+chips.innerHTML += `<div class="spec-chip" onclick="setSpec('${s.id}',this)">${s.icon} ${s.id}</div>`;
+});
+const brSpec = document.getElementById(‘br-spec’);
+specialties.forEach(s => brSpec.innerHTML += `<option value="${s.id}">${s.icon} ${s.id}</option>`);
+}
+
+function setSpec(v, el) {
+curSpec = v;
+document.querySelectorAll(’.spec-chip’).forEach(c => c.classList.remove(‘on’));
+el.classList.add(‘on’);
+renderPros();
+}
+
+// ══ عرض المعلمين ══
+function renderPros() {
+const search = document.getElementById(‘main-search’)?.value || ‘’;
+const city = document.getElementById(‘city-filter’)?.value || ‘’;
+const village = document.getElementById(‘village-filter’)?.value || ‘’;
+const list = professionals.filter(p => {
+const s1 = !curSpec || p.spec === curSpec;
+// بحث برقم OMR أو اسم أو تخصص أو منطقة
+const s2 = !search ||
+p.name?.includes(search) ||
+p.spec?.includes(search) ||
+p.area?.includes(search) ||
+p.userId?.toLowerCase().includes(search.toLowerCase()) ||
+p.phone?.includes(search);
+const s3 = !city || p.area?.includes(city) || p.city?.includes(city);
+const s4 = !village || p.area?.includes(village) || p.village?.includes(village);
+return s1 && s2 && s3 && s4;
+});
+const el = document.getElementById(‘pros-list’);
+el.innerHTML = list.length ? list.map(proCard).join(’’) : ‘<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">لا نتائج</div></div>’;
+}
+
+function renderBrowse() {
+const spec = document.getElementById(‘br-spec’)?.value || ‘’;
+const city = document.getElementById(‘br-city’)?.value || ‘’;
+const village = document.getElementById(‘br-village’)?.value || ‘’;
+const list = professionals.filter(p => {
+const s1 = !spec || p.spec === spec;
+const area = p.area||p.city||’’;
+const s2 = !city || area.includes(city) || (p.city||’’).includes(city);
+const s3 = !village || area.includes(village) || (p.village||’’).includes(village);
+return s1 && s2 && s3;
+});
+const el = document.getElementById(‘browse-list’);
+el.innerHTML = list.length ? list.map(proCard).join(’’) : ‘<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">لا نتائج</div></div>’;
+}
+
+function proCard(p){
+const bg=TBG[p.type]||’#f1f5f9’,tc=TCL[p.type]||’#475569’,em=TEM[p.type]||‘👤’;
+const avg=avgRating(p),cnt=p.reviews?.length||0;
+const avStyle=p.avatar?`background-image:url(${p.avatar});background-size:cover;background-position:center`:`background:${bg};color:${tc}`;
+return `<div class="pc" onclick="openDetail(${p.id})"> <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px"> <div class="av" style="width:46px;height:46px;font-size:20px;${avStyle}">${p.avatar?'':em}</div> <div style="flex:1;min-width:0"> <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px"> <span style="font-weight:800;font-size:15px">${p.name}</span> ${p.verified?`<span class="verified-badge">✓ موثّق</span>`:''} ${p.avail?'<span class="badge b-green">متاح</span>':'<span class="badge b-red">مشغول</span>'} </div> <div style="font-size:13px;color:var(--text2)">${p.spec}</div> <div style="font-size:12px;color:var(--text3)">📍 ${p.area||[p.village,p.city].filter(Boolean).join(' - ')||''}</div> ${p.userCode?`<div style="font-size:11px;color:var(--blue);font-weight:700">#${p.userCode}</div>`:''} </div> <div style="text-align:left;flex-shrink:0"> ${avg?`<div style="display:flex;align-items:center;gap:3px"><span style="color:#f59e0b">★</span><span style="font-size:13px;font-weight:700">${avg.toFixed(1)}</span></div><div style="font-size:11px;color:var(--text3)">(${cnt})</div>`:`<div style="font-size:12px;color:var(--text3)">جديد</div>`} <div style="font-size:11px;color:var(--text3);margin-top:3px">${p.exp}</div> </div> </div> ${p.desc?`<p style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.desc}</p>`:''} ${p.photos?.length?`<div style="display:flex;gap:4px;margin-bottom:10px;overflow:hidden;border-radius:8px">${p.photos.slice(0,3).map(src=>`<img src="${src}" style="width:${100/Math.min(3,p.photos.length)}%;aspect-ratio:1;object-fit:cover">`).join(’’)}</div>`:''} <div style="display:flex;gap:8px"> <button class="btn-call btn-sm" style="flex:1" onclick="event.stopPropagation();location.href='tel:${p.phone}'">📞 اتصل</button> ${p.wa?`<a class="btn-wa btn-sm" style="flex:1" href="https://wa.me/963${p.wa.slice(1)}" onclick="event.stopPropagation()">واتساب</a>`:’’}
+<button class="btn btn-primary btn-sm" style="flex:1;padding:9px" onclick="event.stopPropagation();openChatWith(${p.id})">💬</button>
+</div>
+
+  </div>`;
+}
+
+/* ══════════ HOME / BROWSE ══════════ */
+
+// ══ تفاصيل المهني ══
+let selectedStars = 0;
+function openDetail(id) {
+const p = professionals.find(x => String(x.id) === String(id));
+if (!p) return;
+const avg = p.reviews?.length ? (p.reviews.reduce((s,r)=>s+r.stars,0)/p.reviews.length).toFixed(1) : null;
+document.getElementById(‘detail-header’).innerHTML = `<div style="display:flex;align-items:center;gap:14px"> <div class="av" style="width:64px;height:64px;font-size:1.8rem;background:rgba(255,255,255,.2);color:#fff">${p.name[0]}</div> <div style="flex:1"> <div style="font-size:1.2rem;font-weight:800;color:#fff">${p.name} ${p.verified?'<span style="font-size:0.7rem;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:20px">✓ موثّق</span>':''}</div> <div style="color:rgba(255,255,255,.8);font-size:0.85rem;margin-top:3px">${p.spec} • 📍 ${p.area||[p.village,p.city].filter(Boolean).join(' - ')||''}</div> <span class="badge ${p.avail?'b-green':'b-red'}" style="margin-top:6px;display:inline-flex">${p.avail?'● متاح':'● مشغول'}</span> </div> </div>`;
+renderDetailBody(p);
+showPage(‘pg-detail’);
+}
+
+function renderDetailBody(p) {
+const avg = p.reviews?.length ? (p.reviews.reduce((s,r)=>s+r.stars,0)/p.reviews.length).toFixed(1) : null;
+const reviewsHtml = p.reviews?.length ? p.reviews.map((r,i) => `<div class="rev-card"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"> <span style="font-weight:700;font-size:14px">${r.author}</span> <div style="display:flex;gap:6px"> ${curUser ?`<button onclick="editReview('${p.id}',${i})" style="background:var(--blue-lt);color:var(--blue);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer">تعديل</button>
+<button onclick="deleteReview('${p.id}',${i})" style="background:#fee2e2;color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer">حذف</button>`: ''} </div> </div> <div class="stars">${'★'.repeat(r.stars)}</div> <p style="font-size:14px;margin-top:6px;color:var(--text2)">${r.text}</p> <p style="font-size:11px;color:var(--text3);margin-top:4px">${r.date}</p> </div>`).join(’’) : ‘<p style="color:var(--text3);text-align:center;padding:16px">لا تقييمات بعد</p>’;
+
+document.getElementById(‘detail-body’).innerHTML = `<div style="display:flex;gap:8px;margin-bottom:16px"> <a href="tel:${p.phone}" class="btn-call" style="flex:1"><i class="fa-solid fa-phone"></i> اتصال</a> ${p.wa ?`<a href="https://wa.me/963${p.wa.slice(1)}" class="btn-wa" style="flex:1"><i class="fa-brands fa-whatsapp"></i> واتساب</a>`: ''} </div> ${p.desc ?`<div class="card"><div class="st" style="margin-bottom:8px">عن المعلم</div><p style="font-size:14px;color:var(--text2);line-height:1.6">${p.desc}</p></div>`: ''} <div class="card"> <div class="st" style="margin-bottom:12px">التقييمات ${avg ?`<span style="color:var(--amber)">★ ${avg}</span>`: ''}</div> ${reviewsHtml} </div> ${curUser ?`
+<div class="card">
+<div class="st" style="margin-bottom:12px">أضف تقييمك</div>
+<div style="display:flex;gap:6px;margin-bottom:10px" id="star-row">
+${[1,2,3,4,5].map(s=>`<span onclick="setStar(${s})" style="font-size:1.6rem;cursor:pointer;color:var(--gray3)" data-s="${s}">★</span>`).join(’’)}
+</div>
+<textarea class="fi" id="review-text" placeholder="اكتب تقييمك..."></textarea>
+<button class="btn btn-primary" onclick="submitReview('${p.id}')">إرسال التقييم</button>
+</div>`: '<p style="text-align:center;color:var(--text3);font-size:14px;padding:10px">سجّل دخول لإضافة تقييم</p>'}`;
+}
+
+function setStar(n) {
+selectedStars = n;
+document.querySelectorAll(’[data-s]’).forEach(s => s.style.color = parseInt(s.dataset.s) <= n ? ‘#f59e0b’ : ‘var(–gray3)’);
+}
+
+function submitReview(proId) {
+if (!selectedStars) { alert(‘اختر عدد النجوم’); return; }
+const text = document.getElementById(‘review-text’).value.trim();
+if (!text) { alert(‘اكتب تقييمك’); return; }
+const p = professionals.find(x => String(x.id) === String(proId));
+if (!p) return;
+p.reviews.push({ author: curUser.name, stars: selectedStars, text, date: ‘الآن’ });
+selectedStars = 0;
+renderDetailBody(p);
+fetch(`${API}/pros/${proId}/review`, {
+method:‘POST’, headers:{‘Content-Type’:‘application/json’,‘x-auth-token’:localStorage.getItem(‘token’)||’’},
+body: JSON.stringify({ rating: selectedStars, comment: text })
+}).catch(()=>{});
+}
+
+function deleteReview(proId, idx) {
+if (!confirm(‘حذف التعليق؟’)) return;
+const p = professionals.find(x => String(x.id) === String(proId));
+if (!p || !p.reviews[idx]) return;
+p.reviews.splice(idx, 1);
+renderDetailBody(p);
+}
+
+function editReview(proId, idx) {
+const p = professionals.find(x => String(x.id) === String(proId));
+if (!p || !p.reviews[idx]) return;
+const newText = prompt(‘تعديل التعليق:’, p.reviews[idx].text);
+if (newText?.trim()) { p.reviews[idx].text = newText.trim(); renderDetailBody(p); }
+}
+
+// ══ Auth ══
+async function doLogin() {
+const id = document.getElementById(‘log-id’).value.trim();
+const pass = document.getElementById(‘log-pass’).value;
+if (!id || !pass) { alert(‘أدخل البيانات’); return; }
+// أدمن محلي
+if (id === ‘0900000000’ && pass === ‘admin123’) {
+curUser = { name:‘الأدمن’, type:‘admin’, phone:‘0900000000’ };
+onLogin(); return;
+}
+const btn = document.getElementById(‘btn-login’);
+btn.classList.add(‘btn-loading’);
+try {
+// يرسل كهاتف وإيميل معاً — السيرفر يتحقق من الاثنين
+const body = { id, phone: id, email: id, password: pass };
+const res = await fetch(`${API}/auth/login`, {
+method:‘POST’, headers:{‘Content-Type’:‘application/json’},
+body: JSON.stringify(body)
+});
+const data = await res.json();
+const u = data.user;
+if ((res.ok && data.success) || (res.ok && u)) {
+localStorage.setItem(‘token’, u._id || ‘’);
+localStorage.setItem(‘userName’, u.name);
+localStorage.setItem(‘userType’, u.role || ‘client’);
+curUser = { id:u._id, name:u.name, type:u.role||‘client’, phone:u.phone, email:u.email };
+onLogin();
+} else { alert(data.message || ‘بيانات خاطئة’); }
+} catch(e) { alert(‘تعذر الاتصال بالسيرفر’); }
+btn.classList.remove(‘btn-loading’);
+}
+
+async function doRegister() {
+const name = document.getElementById(‘reg-name’).value.trim();
+const phone = document.getElementById(‘reg-phone’).value.trim();
+const email = document.getElementById(‘reg-email’).value.trim();
+const pass = document.getElementById(‘reg-pass’).value;
+const type = document.getElementById(‘reg-type’).value;
+if (!name||!phone||!pass) { alert(‘أكمل البيانات’); return; }
+const btn = document.getElementById(‘btn-register’);
+btn.classList.add(‘btn-loading’);
+try {
+const res = await fetch(`${API}/auth/register`, {
+method:‘POST’, headers:{‘Content-Type’:‘application/json’},
+body: JSON.stringify({ name, phone, email, password: pass, role: type, spec: ‘’, city: ‘’, village: ‘’ })
+});
+const data = await res.json();
+if (res.ok && data.success) {
+alert(’✅ تم إنشاء حسابك\nرقمك: ’ + data.userId + ‘\nسجّل دخول الآن’);
+showSection(‘login-form’);
+} else { alert(data.error || data.message || ‘خطأ في التسجيل’); }
+} catch(e) { alert(‘تعذر الاتصال’); }
+btn.classList.remove(‘btn-loading’);
+}
+
+async function resetPassword() {
+const phone = document.getElementById(‘forgot-phone’).value.trim();
+const newPass = document.getElementById(‘forgot-newpass’).value;
+const confirm = document.getElementById(‘forgot-confirm’).value;
+if (!phone) { alert(‘أدخل رقم الهاتف’); return; }
+if (newPass.length < 6) { alert(‘كلمة المرور قصيرة’); return; }
+if (newPass !== confirm) { alert(‘كلمتا المرور غير متطابقتين’); return; }
+const btn = document.getElementById(‘btn-forgot’);
+btn.classList.add(‘btn-loading’);
+try {
+const res = await fetch(`${API}/auth/reset-password`, {
+method:‘POST’, headers:{‘Content-Type’:‘application/json’},
+body: JSON.stringify({ phone, newPass })
+});
+const data = await res.json();
+if (res.ok) { alert(‘✅ تم تعيين كلمة المرور’); showSection(‘login-form’); }
+else { alert(data.message || ‘رقم الهاتف غير موجود’); }
+} catch(e) { alert(‘تعذر الاتصال’); }
+btn.classList.remove(‘btn-loading’);
+}
+
+async function changePassword() {
+const oldPass = document.getElementById(‘old-pass’).value;
+const newPass = document.getElementById(‘new-pass’).value;
+const confirm = document.getElementById(‘confirm-pass’).value;
+if (!oldPass||!newPass) { alert(‘أكمل الحقول’); return; }
+if (newPass.length < 6) { alert(‘كلمة المرور قصيرة’); return; }
+if (newPass !== confirm) { alert(‘كلمتا المرور غير متطابقتين’); return; }
+try {
+const res = await fetch(`${API}/auth/change-password`, {
+method:‘PUT’, headers:{‘Content-Type’:‘application/json’,‘x-auth-token’:localStorage.getItem(‘token’)||’’},
+body: JSON.stringify({ oldPass, newPass })
+});
+const data = await res.json();
+if (res.ok) {
+alert(‘✅ تم تغيير كلمة المرور’);
+[‘old-pass’,‘new-pass’,‘confirm-pass’].forEach(id => document.getElementById(id).value=’’);
+} else { alert(data.message || ‘كلمة المرور القديمة خاطئة’); }
+} catch(e) { alert(‘تعذر الاتصال’); }
+}
+
+function onLogin() {
+document.getElementById(‘auth-section’).style.display = ‘none’;
+document.getElementById(‘user-section’).style.display = ‘’;
+document.getElementById(‘profile-name’).textContent = curUser.name;
+const types = {client:‘عميل’,worker:‘معلم حرفي’,store:‘محل مواد بناء’,engineer:‘مهندس’,contractor:‘متعهد’,admin:‘أدمن’};
+document.getElementById(‘profile-type’).textContent = types[curUser.type] || curUser.type;
+if (curUser.type === ‘admin’) document.getElementById(‘admin-btn’).style.display = ‘’;
+const av = document.getElementById(‘profile-av’);
+const savedAvatar = localStorage.getItem(‘userAvatar’);
+if (savedAvatar) { av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`; }
+else { av.textContent = curUser.name[0]; }
+renderMyPhotos();
+}
+
+function doLogout() {
+curUser = null;
+localStorage.removeItem(‘token’);
+document.getElementById(‘auth-section’).style.display = ‘’;
+document.getElementById(‘user-section’).style.display = ‘none’;
+document.getElementById(‘admin-btn’).style.display = ‘none’;
+showSection(‘login-form’);
+showPage(‘pg-home’);
+}
+
+// ══ الصورة الشخصية ══
+function onAvatarChange(input) {
+const file = input.files[0]; if (!file) return;
+if (file.size > 2*1024*1024) { alert(‘الصورة كبيرة — الحد 2MB’); return; }
+const reader = new FileReader();
+reader.onload = e => {
+const src = e.target.result;
+document.getElementById(‘profile-av’).innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+localStorage.setItem(‘userAvatar’, src);
+};
+reader.readAsDataURL(file);
+}
+
+// ══ صور الأعمال ══
+let myWorkPhotos = JSON.parse(localStorage.getItem(‘myWorkPhotos’)||’[]’);
+
+function renderMyPhotos() {
+const grid = document.getElementById(‘my-photos-grid’);
+const count = document.getElementById(‘photos-count’);
+if (!grid) return;
+count.textContent = `${myWorkPhotos.length}/50`;
+grid.innerHTML = myWorkPhotos.map((src,i) => `<div style="position:relative"> <img src="${src}" class="photo-thumb"> <button onclick="deletePhoto(${i})" style="position:absolute;top:2px;right:2px;background:rgba(239,68,68,.85);color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center">✕</button> </div>`).join(’’);
+}
+
+function onPhotosChange(input) {
+const files = Array.from(input.files);
+const rem = 50 - myWorkPhotos.length;
+if (files.length > rem) { alert(`يمكنك إضافة ${rem} صورة فقط`); return; }
+files.forEach(f => {
+const reader = new FileReader();
+reader.onload = e => {
+myWorkPhotos.push(e.target.result);
+localStorage.setItem(‘myWorkPhotos’, JSON.stringify(myWorkPhotos));
+renderMyPhotos();
+};
+reader.readAsDataURL(f);
+});
+input.value = ‘’;
+}
+
+function deletePhoto(idx) {
+if (!confirm(‘حذف الصورة؟’)) return;
+myWorkPhotos.splice(idx, 1);
+localStorage.setItem(‘myWorkPhotos’, JSON.stringify(myWorkPhotos));
+renderMyPhotos();
+}
+
+// ══ إضافة مهني ══
+function checkAddPage() {
+const af = document.getElementById(‘add-form’);
+const lm = document.getElementById(‘add-login-msg’);
+if (curUser) { af.style.display=’’; lm.style.display=‘none’; }
+else { af.style.display=‘none’; lm.style.display=’’; }
+}
+
+async function submitPro() {
+const name = document.getElementById(‘add-name’).value.trim();
+const spec = document.getElementById(‘add-spec’).value;
+const city = document.getElementById(‘add-city’).value;
+const village = document.getElementById(‘add-village’).value;
+const phone = document.getElementById(‘add-phone’).value.trim();
+const wa = document.getElementById(‘add-wa’).value.trim();
+const desc = document.getElementById(‘add-desc’).value.trim();
+const exp = document.getElementById(‘add-exp’).value;
+if (!name||!phone||!city) { alert(‘أكمل البيانات المطلوبة’); return; }
+const area = village || city;
+const newPro = { id:Date.now(), name, spec, area, phone, wa, desc, exp, type:curUser?.type||‘worker’, avail:true, verified:false, reviews:[] };
+professionals.unshift(newPro);
+const btn = document.getElementById(‘btn-add’);
+btn.classList.add(‘btn-loading’);
+try {
+await fetch(`${API}/pros/add`, {
+method:‘POST’, headers:{‘Content-Type’:‘application/json’,‘x-auth-token’:localStorage.getItem(‘token’)||’’},
+body: JSON.stringify({ name, spec, area, phone, wa, desc, exp, type:curUser?.type||‘worker’ })
+});
+} catch(e) {}
+btn.classList.remove(‘btn-loading’);
+alert(‘✅ تم نشر ملفك المهني’);
+showPage(‘pg-home’);
+}
+
+// ══ لوحة الأدمن ══
+function renderAdmin() {
+document.getElementById(‘admin-list’).innerHTML = professionals.map(p => `<div class="admin-row"> <div style="flex:1"> <div style="font-weight:700">${p.name}</div> <div style="font-size:12px;color:var(--text3)">${p.spec} • ${p.area||[p.village,p.city].filter(Boolean).join(' - ')||''}</div> <div style="margin-top:4px;display:flex;gap:5px"> ${p.verified?'<span class="badge b-blue">✓ موثّق</span>':''} ${p.isFeatured?'<span class="badge b-amber">⭐ مميز</span>':''} </div> </div> <div style="display:flex;gap:6px"> <button onclick="adminVerify('${p.id}')" style="background:var(--blue-lt);color:var(--blue);border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">${p.verified?'إلغاء التوثيق':'توثيق'}</button> <button onclick="adminFeature('${p.id}')" style="background:#fef3c7;color:#92400e;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">${p.isFeatured?'إلغاء التميز':'تمييز'}</button> </div> </div>`).join(’’);
+}
+
+async function adminVerify(id) {
+const p = professionals.find(x => String(x.id)===String(id));
+if (!p) return;
+p.verified = !p.verified;
+renderAdmin();
+fetch(`${API}/pros/admin/verify-pro/${id}`, {method:‘PUT’,headers:{‘x-auth-token’:localStorage.getItem(‘token’)||’’}}).catch(()=>{});
+}
+
+async function adminFeature(id) {
+const p = professionals.find(x => String(x.id)===String(id));
+if (!p) return;
+p.isFeatured = !p.isFeatured;
+renderAdmin();
+fetch(`${API}/pros/admin/feature-pro/${id}`, {method:‘PUT’,headers:{‘Content-Type’:‘application/json’,‘x-auth-token’:localStorage.getItem(‘token’)||’’},body:JSON.stringify({isFeatured:p.isFeatured})}).catch(()=>{});
+}
+
+// ══ جلب من السيرفر ══
+async function loadFromServer() {
+try {
+const res = await fetch(`${API}/pros`);
+const data = await res.json();
+if (Array.isArray(data) && data.length) {
+professionals = [];
+data.forEach(p => {
+professionals.push({
+id:p._id||p.id,
+name:p.name,
+spec:p.spec||’’,
+type:p.role||p.type||‘worker’,
+area:[p.village,p.city].filter(Boolean).join(’ - ‘)||p.area||’’,
+city:p.city||’’,
+village:p.village||’’,
+phone:p.phone,
+wa:p.wa||p.phone||’’,
+exp:p.experience||p.exp||’’,
+desc:p.description||p.desc||’’,
+avail:!p.isBusy,
+verified:p.verified||false,
+isFeatured:p.isFeatured||false,
+userId:p.userId||’’,
+reviews:[]
+});
+});
+renderPros();
+} else {
+document.getElementById(‘pros-list’).innerHTML = ‘<div class="empty"><div class="empty-icon">👷</div><div class="empty-text">لا يوجد حرفيون بعد</div></div>’;
+}
+} catch(e) {
+console.log(‘offline’);
+renderPros();
+}
+}
+// ══ استعادة الجلسة ══
+function restoreSession() {
+const token = localStorage.getItem(‘token’);
+const name = localStorage.getItem(‘userName’);
+const type = localStorage.getItem(‘userType’);
+if (token && name) {
+curUser = { name, type: type||‘client’ };
+onLogin();
+}
+}
+
+// ══ INIT ══
+initCities();
+initChips();
+renderPros();
+loadFromServer().then(() => initAdBar());
+restoreSession();
+</script>
+
+</body>
+</html>
