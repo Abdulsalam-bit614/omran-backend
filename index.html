@@ -1209,6 +1209,9 @@ function onLogin() {
   const types = {client:'عميل',worker:'معلم حرفي',store:'محل مواد بناء',engineer:'مهندس',contractor:'متعهد',admin:'أدمن'};
   document.getElementById('profile-type').textContent = types[curUser.type] || curUser.type;
   if (curUser.type === 'admin') document.getElementById('admin-btn').style.display = '';
+  // حفظ معلومات إضافية
+  if (curUser.phone) localStorage.setItem('userPhone', curUser.phone);
+  if (curUser.id) localStorage.setItem('token', curUser.id);
   const av = document.getElementById('profile-av');
   const savedAvatar = localStorage.getItem('userAvatar');
   if (savedAvatar) { av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`; }
@@ -1218,7 +1221,9 @@ function onLogin() {
 
 // ══ مشغول / متاح ══
 async function toggleBusy() {
-  if (!curUser || !curUser.id) { alert('سجّل دخول أولاً'); return; }
+  if (!curUser) { alert('سجّل دخول أولاً'); return; }
+  if (!curUser.id) { curUser.id = localStorage.getItem('token'); }
+  if (!curUser.id) { alert('سجّل دخول أولاً'); return; }
   const isBusy = curUser.isBusy || false;
   const newBusy = !isBusy;
   try {
@@ -1249,6 +1254,8 @@ function updateBusyBtn() {
 function doLogout() {
   curUser = null;
   localStorage.removeItem('token');
+  localStorage.removeItem('userPhone');
+  localStorage.removeItem('userBusy');
   document.getElementById('auth-section').style.display = '';
   document.getElementById('user-section').style.display = 'none';
   document.getElementById('admin-btn').style.display = 'none';
@@ -1388,6 +1395,15 @@ async function loadFromServer() {
     const res = await fetch(`${API}/pros`);
     const data = await res.json();
     if (Array.isArray(data) && data.length) {
+      // تحديث حالة المستخدم الحالي من السيرفر
+      if (curUser && curUser.phone) {
+        const myData = data.find(p => p.phone === curUser.phone);
+        if (myData) {
+          curUser.isBusy = myData.isBusy || false;
+          localStorage.setItem('userBusy', curUser.isBusy);
+          updateBusyBtn();
+        }
+      }
       professionals = data.map(p => ({
         id:p._id||p.id,
         name:p.name,
@@ -1419,8 +1435,10 @@ function restoreSession() {
   const token = localStorage.getItem('token');
   const name = localStorage.getItem('userName');
   const type = localStorage.getItem('userType');
+  const phone = localStorage.getItem('userPhone');
+  const isBusy = localStorage.getItem('userBusy') === 'true';
   if (token && name) {
-    curUser = { name, type: type||'client' };
+    curUser = { id: token, name, type: type||'client', phone, isBusy };
     onLogin();
   }
 }
