@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>عُمران - منصة الحرفيين</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f7; --white:#ffffff; --blue:#2563eb; --blue2:#1d4ed8;
+  --text:#0f172a; --text2:#475569; --text3:#94a3b8; --border:#e2e8f0;
+  --r:16px; --rsm:12px; --shadow:0 4px 12px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden}
+
+/* إصلاح مشكلة السكرول */
+#app{height:100%; display:flex; flex-direction:column; position:relative}
+.page{display:none; position:absolute; inset:0; background:var(--bg); overflow-y:auto; padding-bottom:80px; -webkit-overflow-scrolling:touch}
+.page.active{display:block}
+
+/* Header & Topbar */
+.tb{background:var(--white); padding:12px 16px; display:flex; align-items:center; gap:10px; sticky; top:0; z-index:100; border-bottom:1px solid var(--border)}
+.search-bar{flex:1; background:var(--bg); border-radius:var(--rsm); padding:8px 12px; display:flex; align-items:center; gap:8px}
+.search-bar input{border:none; background:transparent; outline:none; width:100%; font-size:14px}
+
+/* Grid & Icons */
+.srv-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:16px; background:var(--white)}
+.srv{display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer}
+.srv-icon{width:60px; height:60px; border-radius:18px; display:flex; align-items:center; justify-content:center; transition:0.2s}
+.srv:active .srv-icon{transform:scale(0.9)}
+.srv-lbl{font-size:11px; font-weight:700; color:var(--text2)}
+
+/* Professional Cards */
+.pro-card{background:var(--white); margin:10px 16px; padding:15px; border-radius:var(--r); display:flex; gap:12px; border:1px solid var(--border); cursor:pointer}
+.pro-av{width:60px; height:60px; border-radius:14px; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold}
+.pro-info h4{font-size:16px; margin-bottom:4px}
+.pro-info p{font-size:12px; color:var(--text3)}
+
+/* Detail Page */
+.detail-hero{background:var(--white); padding:20px; text-align:center; border-bottom:1px solid var(--border)}
+.contact-actions{display:flex; gap:10px; padding:16px}
+.btn{flex:1; padding:14px; border-radius:12px; border:none; font-weight:bold; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px}
+.btn-call{background:#16a34a; color:#fff}
+.btn-chat{background:var(--blue); color:#fff}
+
+/* Auth Pages */
+.auth-wrap{padding:30px 20px; background:var(--white); min-height:100%}
+.fg{margin-bottom:15px}
+.fl{display:block; margin-bottom:5px; font-size:13px; font-weight:bold}
+.fi{width:100%; padding:12px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit}
+
+/* Bottom Nav */
+.bnav{position:fixed; bottom:0; width:100%; background:var(--white); display:flex; border-top:1px solid var(--border); z-index:1000}
+.nb{flex:1; padding:12px; border:none; background:none; font-size:11px; color:var(--text3); cursor:pointer}
+.nb.on{color:var(--blue)}
+</style>
+</head>
+<body>
+
+<div id="app">
+    <!-- صفحة الدخول والتسجيل -->
+    <div id="pg-auth" class="page active">
+        <div class="auth-wrap">
+            <h2 style="text-align:center; margin-bottom:20px">عُمران</h2>
+            <div id="auth-login">
+                <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" type="tel" placeholder="09xxxxxxxx"></div>
+                <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" type="password" placeholder="••••••"></div>
+                <button class="btn btn-chat" style="width:100%" onclick="showPage('pg-home')">تسجيل الدخول</button>
+                <p style="text-align:center; margin-top:15px; font-size:13px">ليس لديك حساب؟ <span style="color:var(--blue); cursor:pointer" onclick="toggleAuth()">إنشاء حساب جديد</span></p>
+            </div>
+            <div id="auth-reg" style="display:none">
+                <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" type="text"></div>
+                <div class="fg"><label class="fl">التخصص</label><select class="fi"><option>حرفي</option><option>مراقب</option></select></div>
+                <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" type="tel"></div>
+                <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" type="password"></div>
+                <!-- الزر سيظهر هنا لأننا أصلحنا الـ Scroll -->
+                <button class="btn btn-chat" style="width:100%" onclick="showPage('pg-home')">إتمام التسجيل</button>
+                <p style="text-align:center; margin-top:15px; font-size:13px" onclick="toggleAuth()">العودة للدخول</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="pg-home" class="page">
+        <div class="tb">
+            <div class="search-bar"><input type="text" placeholder="ابحث عن حرفي أو مراقب..."></div>
+        </div>
+        <div class="srv-grid">
+            <div class="srv" onclick="openCat('دهان')"><div class="srv-icon" style="background:#fce7f3">🎨</div><span class="srv-lbl">دهان</span></div>
+            <div class="srv" onclick="openCat('سباكة')"><div class="srv-icon" style="background:#e0f2fe">🚰</div><span class="srv-lbl">سباكة</span></div>
+            <div class="srv" onclick="openCat('كهرباء')"><div class="srv-icon" style="background:#fefce8">⚡</div><span class="srv-lbl">كهرباء</span></div>
+            <div class="srv" onclick="openCat('مراقب')"><div class="srv-icon" style="background:#dcfce7">👁️</div><span class="srv-lbl">مراقب</span></div>
+        </div>
+        <div id="featured-list">
+            <h4 style="padding:16px 16px 0">حرفيين مقترحين</h4>
+            <div class="pro-card" onclick="openPro('أحمد الدهان', 'دهان وميكور')">
+                <div class="pro-av">أ</div>
+                <div class="pro-info"><h4>أحمد الدهان</h4><p>درعا - خبرة 10 سنوات</p></div>
+            </div>
+            <div class="pro-card" onclick="openPro('خالد المراقب', 'مراقب جودة')">
+                <div class="pro-av">خ</div>
+                <div class="pro-info"><h4>خالد المراقب</h4><p>دمشق - فحص استلام شقق</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة تفاصيل الحرفي/المراقب (الكرت) -->
+    <div id="pg-detail" class="page">
+        <div class="tb"><button onclick="showPage('pg-home')" style="border:none; background:none; font-size:18px">✕</button> <span id="det-title">بيانات المهني</span></div>
+        <div class="detail-hero">
+            <div class="pro-av" style="width:80px; height:80px; margin:0 auto 10px; font-size:32px">؟</div>
+            <h2 id="det-name">اسم الحرفي</h2>
+            <p id="det-spec" style="color:var(--text3)">التخصص</p>
+        </div>
+        <div style="padding:20px; background:#fff; margin:10px; border-radius:12px; font-size:14px; line-height:1.6">
+            <strong>عن المهني:</strong><br>
+            يقدم خدمات احترافية مع ضمان الجودة والالتزام بالمواعيد.
+        </div>
+        <div class="contact-actions">
+            <button class="btn btn-call" onclick="alert('جاري الاتصال...')">📞 اتصال</button>
+            <button class="btn btn-chat" onclick="alert('فتح الدردشة...')">💬 دردشة</button>
+        </div>
+        <div style="padding:0 20px">
+            <h4>التقييمات ⭐</h4>
+            <p style="font-size:12px; color:var(--text2); margin-top:5px">لا توجد تقييمات بعد. كن أول من يقيم!</p>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bnav">
+        <button class="nb on" onclick="showPage('pg-home')">🏠 الرئيسية</button>
+        <button class="nb" onclick="alert('قريباً')">💬 الدردشة</button>
+        <button class="nb" onclick="alert('سجل دخول أولاً')">👤 حسابي</button>
+    </nav>
+</div>
+
+<script>
+// وظيفة التنقل بين الصفحات
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// تبديل بين الدخول والتسجيل
+function toggleAuth() {
+    const login = document.getElementById('auth-login');
+    const reg = document.getElementById('auth-reg');
+    if(login.style.display === 'none') {
+        login.style.display = 'block'; reg.style.display = 'none';
+    } else {
+        login.style.display = 'none'; reg.style.display = 'block';
+    }
+}
+
+// فتح القسم
+function openCat(name) {
+    alert("سيتم عرض قائمة: " + name);
+    // هنا يمكن تصفية البيانات وعرضها في صفحة النتائج
+}
+
+// فتح كرت الحرفي (المشكلة التي ذكرتها)
+function openPro(name, spec) {
+    document.getElementById('det-name').innerText = name;
+    document.getElementById('det-spec').innerText = spec;
+    document.getElementById('det-title').innerText = "ملف " + name;
+    showPage('pg-detail');
+}
+</script>
+
+</body>
+</html>
