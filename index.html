@@ -1636,29 +1636,73 @@ async function renderFeaturedStrip(){
   const featured=professionals.filter(p=>p.isFeatured);
   if(!filteredAds.length&&!featured.length){container.style.display='none';return;}
   container.style.display='';
+
+  // تجميع حسب الفئة
   const categories={};
-  filteredAds.forEach((a,i)=>{const cat=a.category||'عام';if(!categories[cat])categories[cat]=[];categories[cat].push({...a,_idx:i});});
-  if(featured.length){if(!categories['حرفيون مميزون'])categories['حرفيون مميزون']=[];featured.forEach(p=>categories['حرفيون مميزون'].unshift({_isPro:true,...p}));}
+  filteredAds.forEach((a,i)=>{
+    const cat=a.category||'عام';
+    if(!categories[cat])categories[cat]=[];
+    categories[cat].push({...a,_idx:i});
+  });
+  if(featured.length){
+    if(!categories['حرفيون مميزون'])categories['حرفيون مميزون']=[];
+    featured.forEach(p=>categories['حرفيون مميزون'].unshift({_isPro:true,...p}));
+  }
+
   let html='';
   Object.entries(categories).forEach(([cat,items])=>{
     const icon=catIcons[cat]||'📢';
     const cards=items.map(item=>{
       if(item._isPro){
-        const av=item.avatar?`<img src="${item.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:20px;font-weight:900;color:var(--blue)">${item.name[0]}</span>`;
-        return `<div onclick="openDetail('${item.id}')" style="flex-shrink:0;width:130px;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.08);background:var(--white);border:1px solid var(--border)"><div style="width:100%;height:85px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;overflow:hidden">${av}</div><div style="padding:8px 10px"><div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:2px">${item.name}</div><div style="font-size:10px;color:var(--text3)">📍 ${item.city||'—'}</div></div></div>`;
+        const av=item.avatar
+          ?`<img src="${item.avatar}" style="width:100%;height:100%;object-fit:cover;display:block">`
+          :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--blue);background:var(--blue-lt)">${item.name[0]}</div>`;
+        return `<div onclick="openDetail('${item.id}')" style="flex-shrink:0;width:130px;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);background:#fff;border:1px solid var(--border);-webkit-tap-highlight-color:transparent">
+          <div style="height:90px;overflow:hidden">${av}</div>
+          <div style="padding:8px 10px">
+            <div style="font-size:12px;font-weight:800;color:#111;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
+            <div style="font-size:10px;color:var(--text3)">📍 ${item.city||'—'}</div>
+          </div>
+        </div>`;
       }
       const i=item._idx;
-      if(item.image)return `<div class="ad-strip-card" onclick="openAd(${i})"><img src="${item.image}"><div class="ad-strip-overlay"></div><div class="ad-strip-badge">${icon} إعلان</div><div class="ad-strip-name">${item.name}</div></div>`;
-      return `<div class="ad-strip-plain" onclick="openAd(${i})"><div style="font-size:9px;color:rgba(255,255,255,.7);margin-bottom:8px">${icon} إعلان</div><div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:4px">${item.name}</div><div style="font-size:10px;color:rgba(255,255,255,.75)">${item.text.substring(0,40)}</div></div>`;
+      if(item.image){
+        return `<div onclick="openAd(${i})" style="flex-shrink:0;width:180px;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;aspect-ratio:16/9;box-shadow:0 2px 8px rgba(0,0,0,.1);-webkit-tap-highlight-color:transparent">
+          <img src="${item.image}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 30%,rgba(0,0,0,.7) 100%);pointer-events:none"></div>
+          <div style="position:absolute;top:7px;right:7px;background:rgba(255,255,255,.9);color:#111;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;pointer-events:none">${icon}</div>
+          <div style="position:absolute;bottom:8px;right:8px;left:8px;font-size:12px;font-weight:800;color:#fff;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
+        </div>`;
+      }
+      return `<div onclick="openAd(${i})" style="flex-shrink:0;width:160px;border-radius:12px;padding:14px;cursor:pointer;background:linear-gradient(135deg,#1e3a8a,#2563eb);box-shadow:0 2px 8px rgba(37,99,235,.2);-webkit-tap-highlight-color:transparent">
+        <div style="font-size:9px;color:rgba(255,255,255,.7);margin-bottom:6px">${icon} إعلان</div>
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.75);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${item.text}</div>
+      </div>`;
     }).join('');
-    html+=`<div class="ads-section"><div class="ads-section-header"><span class="ads-section-icon">${icon}</span><span class="ads-section-title">${cat}</span><span class="ads-section-count">${items.length}</span></div><div class="ads-strip">${cards}</div></div>`;
+
+    html+=`
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+          <span style="font-size:16px">${icon}</span>
+          <span style="font-size:14px;font-weight:800;color:#111">${cat}</span>
+          <span style="font-size:11px;color:#94a3b8">(${items.length})</span>
+        </div>
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+          ${cards}
+        </div>
+      </div>`;
   });
-  if(!html){container.style.display='none';return;}
-  container.style.display='';
+
   container.innerHTML=html;
+
+  // إخفاء scrollbar
+  container.querySelectorAll('[style*="overflow-x:auto"]').forEach(el=>{
+    el.style.cssText += ';-ms-overflow-style:none';
+  });
 }
 
-// ══ PROFILE ══
+
 async function toggleBusy(){
   if(!curUser)return;const newBusy=!curUser.isBusy;
   try{const res=await fetch(`${API}/auth/busy`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:curUser.id,isBusy:newBusy})});
