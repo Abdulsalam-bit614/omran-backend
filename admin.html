@@ -9,7 +9,7 @@
 <style>
 :root { --primary:#1a56db; --green:#22c55e; --red:#ef4444; --amber:#f59e0b; --bg:#f1f5f9; --white:#fff; --border:#e2e8f0; --text:#0f172a; --sub:#64748b; }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text)}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ad-bar{background:linear-gradient(135deg,#1241a8,var(--primary));color:#fff;padding:10px 0;overflow:hidden;position:relative}
 .ad-bar::before,.ad-bar::after{content:'';position:absolute;top:0;width:60px;height:100%;z-index:2}
 .ad-bar::before{right:0;background:linear-gradient(to left,#1241a8,transparent)}
@@ -375,7 +375,7 @@ tr:hover td{background:#fafbff}
 </div>
 
 <script>
-const API = '/api';
+const API = 'https://omransy.com/api';
 let allPros = [];
 let activeAdsCount = 0;
 
@@ -1074,7 +1074,7 @@ async function exportBackup() {
 window.onload = () => { loadData(); initCitySelects(); };
 </script>
 <!-- Monitor Tab -->
-<div id="tab-monitor" style="display:none;padding:16px">
+<div id="tab-monitor" style="display:none;padding:16px;padding-bottom:100px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <h2 style="font-size:16px;font-weight:800">👁️ طلبات المراقبة</h2>
     <button class="btn-main" onclick="loadMonitorRequests()">🔄 تحديث</button>
@@ -1140,7 +1140,7 @@ window.onload = () => { loadData(); initCitySelects(); };
 </div>
 
 <!-- Reports Tab -->
-<div id="tab-reports" style="display:none;padding:16px">
+<div id="tab-reports" style="display:none;padding:16px;padding-bottom:100px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <h2 style="font-size:16px;font-weight:800">🚩 البلاغات</h2>
     <div style="display:flex;gap:8px">
@@ -1157,7 +1157,7 @@ window.onload = () => { loadData(); initCitySelects(); };
 </div>
 
 <!-- Settings Tab -->
-<div id="tab-settings" style="display:none;padding:16px">
+<div id="tab-settings" style="display:none;padding:16px;padding-bottom:100px">
   <h2 style="font-size:16px;font-weight:800;margin-bottom:20px">⚙️ إعدادات المنصة</h2>
   
   <!-- تفعيل/تعطيل المراقب -->
@@ -1178,7 +1178,7 @@ window.onload = () => { loadData(); initCitySelects(); };
 </div>
 
 <!-- Market Tab -->
-<div id="tab-market" style="display:none;padding:16px">
+<div id="tab-market" style="display:none;padding:16px;padding-bottom:100px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <h2 style="font-size:16px;font-weight:800">🧱 منتجات بانتظار الموافقة</h2>
     <button class="btn-main" onclick="loadPendingProducts()">🔄 تحديث</button>
@@ -1189,7 +1189,7 @@ window.onload = () => { loadData(); initCitySelects(); };
 </div>
 
 <!-- AdCats Tab -->
-<div id="tab-adcats" style="display:none;padding:16px">
+<div id="tab-adcats" style="display:none;padding:16px;padding-bottom:100px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <h2 style="font-size:16px;font-weight:800">فئات الإعلانات</h2>
     <button class="btn-main" onclick="openAdCatModal()">+ فئة جديدة</button>
