@@ -1,4 +1,4 @@
-Require("dotenv").config();
+require("dotenv").config();
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -122,7 +122,7 @@ app.get('/sw.js', (req, res) => res.sendFile('sw.js', { root: __dirname }));
 app.get('/manifest.json', (req, res) => res.sendFile('manifest.json', { root: __dirname }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.log('❌ DB Error:', err));
 
