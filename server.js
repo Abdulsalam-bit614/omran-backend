@@ -129,8 +129,6 @@ mongoose.connect(process.env.MONGODB_URI)
 // ══ Models ══
 const UserSchema = new mongoose.Schema({
     userId:       { type: String, unique: true },
-    shopName:     { type: String, default: '' },
-    shopDesc:     { type: String, default: '' },
     name:         { type: String, required: true },
     phone:        { type: String, unique: true, sparse: true },
     email:        { type: String, unique: true, sparse: true },
@@ -640,30 +638,6 @@ app.delete('/api/admin/user/:id', async (req, res) => {
         await User.findByIdAndDelete(req.params.id);
         res.json({ success: true });
     } catch(e) { res.status(500).json({ error: 'خطأ في الحذف' }); }
-});
-
-// ══ Sellers Route ══
-app.get('/api/sellers', async (req, res) => {
-    try {
-        const sellers = await User.find({ role: 'seller', blocked: { $ne: true } })
-            .select('_id name shopName shopDesc city phone avatar')
-            .sort({ createdAt: -1 })
-            .lean();
-        res.json(sellers);
-    } catch(e) { res.status(500).json([]); }
-});
-
-app.get('/api/sellers/:id', async (req, res) => {
-    try {
-        const seller = await User.findById(req.params.id)
-            .select('_id name shopName shopDesc city phone avatar')
-            .lean();
-        if(!seller) return res.status(404).json({ error: 'المحل غير موجود' });
-        const products = await Product.find({ sellerId: req.params.id, status: 'active' })
-            .sort({ createdAt: -1 })
-            .lean();
-        res.json({ seller, products });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
 });
 
 // ══ Monitors Route ══
@@ -1226,130 +1200,6 @@ setInterval(() => {
         if (now - data.start > 3600000) rateLimitMap.delete(key);
     }
 }, 3600000);
-
-// ══ AI Image Analysis Route ══
-app.post('/api/ai/analyze-image', async (req, res) => {
-    try {
-        const { imageBase64, mediaType } = req.body;
-        if (!imageBase64) return res.status(400).json({ error: 'الصورة مطلوبة' });
-
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
-
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { inline_data: { mime_type: mediaType || 'image/jpeg', data: imageBase64 } },
-                            { text: `أنت مساعد في منصة عُمران للحرفيين السوريين. انظر لهذه الصورة وحلل المشكلة الموجودة فيها.
-أجب بـ JSON فقط بدون أي نص إضافي أو backticks بهذا الشكل:
-{"problem":"وصف المشكلة بجملة واحدة واضحة","severity":"بسيطة أو متوسطة أو خطيرة","canDIY":true,"diySteps":["خطوة 1","خطوة 2","خطوة 3"],"diyTools":["الأداة المطلوبة"],"needsCraftsman":true,"craftsmanType":"نوع الحرفي أو null","urgency":"فوري أو قريباً أو يمكن الانتظار","tip":"نصيحة مفيدة قصيرة"}` }
-                        ]
-                    }]
-                })
-            }
-        );
-
-        if (!response.ok) {
-            const err = await response.json();
-            return res.status(500).json({ error: 'خطأ في تحليل الصورة: ' + (err.error?.message || 'حاول مرة ثانية') });
-        }
-
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(clean);
-        res.json({ success: true, result: parsed });
-
-    } catch(e) {
-        console.error('AI analyze error:', e);
-        res.status(500).json({ error: 'تعذر تحليل الصورة — حاول مرة ثانية' });
-    }
-});
-
-// ══ AI Chat Route ══
-app.post('/api/ai/chat', async (req, res) => {
-    try {
-        const { messages, city } = req.body;
-        if (!messages || !messages.length) return res.status(400).json({ error: 'الرسائل مطلوبة' });
-
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
-
-        // جلب بيانات حقيقية من قاعدة البيانات
-        const pros = await User.find({ role: 'pro', blocked: { $ne: true } })
-            .select('name spec city village phone avgRating reviewCount isFeatured')
-            .sort({ avgRating: -1 })
-            .limit(50)
-            .lean();
-
-        const prosData = pros.map(p => 
-            `${p.name} | ${p.spec} | ${p.city||''} ${p.village||''} | تقييم: ${p.avgRating||0}/5 (${p.reviewCount||0} تقييم)${p.isFeatured?' | مميز':''}`
-        ).join('\n');
-
-        const systemPrompt = `أنت مساعد ذكي لمنصة عُمران — منصة الحرفيين السوريين.
-اسمك "مساعد عُمران" وتتحدث باللهجة العربية السورية البسيطة.
-        
-معلومات المنصة:
-- عُمران تربط الحرفيين بأصحاب الحاجة في سوريا
-- الموقع: omransy.com
-- التخصصات: كهربائي، سباك، نجار، دهان، بناء، بلاط، جبس، حداد، مطابخ، مهندس، هدم، آليات، محامي، مراقب
-- سوق عُمران: بيع وشراء مواد البناء
-- خدمة المراقب: متابعة البناء عن بُعد للمغتربين
-- طلبات العمل: ينشر العميل طلب والحرفيون يتقدمون بعروض
-
-قائمة الحرفيين المسجلين الحاليين:
-${prosData}
-
-قواعد الإجابة:
-1. لو سألك عن أفضل حرفي — رتّب من قاعدة البيانات الفعلية حسب التقييم
-2. لو سألك عن تخصص — اعطه الحرفيين المناسبين من القائمة
-3. لو سألك كيف يستخدم المنصة — اشرح بخطوات بسيطة
-4. لو سألك سؤال عام عن البناء أو الإصلاح — أجب بمعلومات مفيدة
-5. اجعل إجاباتك قصيرة وواضحة ومباشرة
-6. لا تخترع حرفيين غير موجودين في القائمة`;
-
-        // بناء محادثة Gemini
-        const lastMsgs = messages.slice(-6);
-        const geminiContents = [];
-        // إضافة system كمقدمة
-        geminiContents.push({ role: 'user', parts: [{ text: systemPrompt }] });
-        geminiContents.push({ role: 'model', parts: [{ text: 'تمام، أنا مساعد عُمران وجاهز للمساعدة!' }] });
-        // إضافة باقي الرسائل
-        for(const m of lastMsgs){
-            geminiContents.push({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: m.content }]
-            });
-        }
-
-        const response = await fetch(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: geminiContents })
-            }
-        );
-
-        if (!response.ok) {
-            const err = await response.json();
-            return res.status(500).json({ error: err.error?.message || 'خطأ في الخدمة' });
-        }
-
-        const data = await response.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'عذراً، تعذرت الإجابة';
-        res.json({ success: true, reply });
-
-    } catch(e) {
-        console.error('AI chat error:', e);
-        res.status(500).json({ error: 'تعذر الاتصال بالمساعد' });
-    }
-});
 
 // ══ Settings Routes ══
 app.get('/api/settings/:key', async (req, res) => {
