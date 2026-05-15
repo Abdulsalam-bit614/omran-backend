@@ -76,7 +76,6 @@ tr:hover td{background:#fafbff}
 </head>
 <body>
 
-  
 <!-- شاشة Login -->
 <div id="admin-login-screen" style="position:fixed;inset:0;background:#f5f6fa;display:flex;align-items:center;justify-content:center;z-index:9999">
   <div style="background:#fff;border-radius:20px;padding:32px 28px;width:90%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.1);text-align:center">
@@ -405,7 +404,7 @@ const API = 'https://omransy.com/api';
 
 // ══ Admin Auth ══
 const ADMIN_CREDENTIALS = [
-  { user: 'omranadmin', pass: 'Omran2025' }
+  { user: 'omran_admin', pass: 'Omran@2025!' }
 ];
 
 function adminLogin(){
@@ -571,7 +570,7 @@ async function addMonitor(){
   // نسجله كمستخدم بـ role: monitor
   const pass = 'monitor' + Math.floor(1000+Math.random()*9000);
   try{
-    const res = await fetch(`${API}/admin/add-user`,{method:'POST',headers:{'Content-Type':'application/json'},
+    const res = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,phone,password:pass,role:'monitor',city,email:'',spec:'مراقب عُمران'})});
     const data = await res.json();
     if(res.ok){ alert(`✅ تم إضافة المراقب
@@ -584,8 +583,9 @@ async function addMonitor(){
 async function loadMonitorRequests(){
   try{
     // جيب المراقبين
-    const monitorsRes = await fetch(`${API}/monitors`);
-    const monitors = await monitorsRes.json();
+    const prosRes = await fetch(`${API}/pros`);
+    const pros = await prosRes.json();
+    const monitors = pros.filter(p=>p.role==='monitor'||p.spec==='مراقب عُمران');
     const monList = document.getElementById('monitors-list');
     if(monList){
       monList.innerHTML = monitors.length
@@ -607,21 +607,11 @@ async function loadMonitorRequests(){
     }
     const statusMap = {pending:'⏳ قيد الانتظار', assigned:'✅ تم التعيين', active:'🔄 نشط', done:'🏁 منتهي'};
     body.innerHTML = requests.map(r=>`<tr>
-      <td>
-        <strong>${r.clientName}</strong>
-        ${r.phone?`<br><a href="tel:${r.phone}" style="font-size:11px;color:var(--blue);font-weight:700">📞 ${r.phone}</a>`:''}
-      </td>
+      <td><strong>${r.clientName}</strong></td>
       <td>${r.proName}</td>
-      <td>
-        <span class="badge ${r.status==='pending'?'b-yellow':r.status==='done'?'b-green':'b-blue'}">${statusMap[r.status]||r.status}</span>
-        ${r.rating?`<div style="font-size:11px;color:#f59e0b;margin-top:2px">${'⭐'.repeat(r.rating)} ${r.rating}/5</div>`:''}
-      </td>
+      <td><span class="badge ${r.status==='pending'?'b-yellow':r.status==='done'?'b-green':'b-blue'}">${statusMap[r.status]||r.status}</span></td>
       <td style="max-width:150px;font-size:12px">${r.notes||'—'}</td>
       <td>${r.monitorName||'—'}</td>
-      <td style="display:flex;gap:6px">
-        <button onclick="adminViewReports('${r._id}')" style="background:#f0f4ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit">📋 التقارير</button>
-        <button onclick="adminDeleteMonitorRequest('${r._id}')" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;font-family:inherit">🗑️</button>
-      </td>
       <td>
         <select onchange="assignMonitor('${r._id}',this.value,this)" style="padding:6px;border:1px solid var(--border);border-radius:6px;font-size:12px">
           <option value="">اختر مراقب</option>
@@ -748,54 +738,6 @@ async function takeAction(reportId, action, status='reviewed'){
     if(res.ok){ loadReports(); alert('✅ تم تنفيذ الإجراء'); }
     else alert('خطأ');
   }catch(e){ alert('تعذر الاتصال'); }
-}
-
-// ══ Admin Monitor Actions ══
-async function adminDeleteMonitorRequest(requestId){
-  if(!confirm('حذف هذا الطلب نهائياً مع تقاريره؟')) return;
-  try{
-    const res = await fetch(`${API}/monitor/request/${requestId}`,{
-      method:'DELETE',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({clientId:'admin', isAdmin:true})
-    });
-    if(res.ok){ loadMonitorRequests(); alert('✅ تم حذف الطلب'); }
-    else alert('تعذر الحذف');
-  }catch(e){ alert('تعذر الاتصال'); }
-}
-
-// ══ Admin View Reports ══
-async function adminViewReports(requestId){
-  const API_URL = API;
-  try{
-    const res = await fetch(`${API_URL}/monitor/reports/${requestId}`);
-    const reports = await res.json();
-    if(!reports.length){ alert('لا توجد تقارير بعد لهذا الطلب'); return; }
-    let html = reports.map(r=>`
-      <div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:12px;font-weight:800;color:#2563eb">اليوم ${r.day}</span>
-          <span style="font-size:10px;color:#94a3b8">${new Date(r.createdAt).toLocaleDateString('ar-SY')}</span>
-        </div>
-        <p style="font-size:13px;color:#334155;line-height:1.6;margin-bottom:8px">${r.text}</p>
-        ${r.images?.length?`<div style="display:flex;gap:6px;flex-wrap:wrap">${r.images.map(img=>`<img src="${img}" onclick="window.open('${img}')" style="width:70px;height:70px;object-fit:cover;border-radius:6px;cursor:pointer">`).join('')}</div>`:''}
-      </div>`).join('');
-    
-    // modal بسيط
-    const old = document.getElementById('admin-reports-modal');
-    if(old) old.remove();
-    const modal = document.createElement('div');
-    modal.id = 'admin-reports-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-    modal.innerHTML = `<div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-weight:900;font-size:16px">📋 تقارير المراقب (${reports.length})</div>
-        <button onclick="document.getElementById('admin-reports-modal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8">✕</button>
-      </div>
-      ${html}
-    </div>`;
-    document.body.appendChild(modal);
-  }catch(e){ alert('تعذر تحميل التقارير'); }
 }
 
 // ══ Settings Functions ══
@@ -1082,16 +1024,14 @@ async function addProManually() {
   if (!name||!spec||!city||!phone) { alert('أكمل الحقول المطلوبة (*)'); return; }
   showLoader(true);
   try {
-    const roleEl = document.getElementById('ap-role');
-  const role = roleEl ? roleEl.value : 'pro';
-  const res = await fetch(`${API}/admin/add-user`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spec,city,village,phone,wa,description:desc,experience:exp,role,password:phone})});
+    const res = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spec,city,village,phone,wa,description:desc,experience:exp,role:'pro',password:phone})});
     const data = await res.json();
     if (res.ok&&data.success) {
       msg.style.display=''; msg.style.color='var(--green)';
       msg.textContent=`✅ تم إضافة ${name} — الرقم: ${data.userId} — كلمة المرور: رقم الهاتف`;
       ['ap-name','ap-spec','ap-village','ap-phone','ap-wa','ap-desc'].forEach(id=>document.getElementById(id).value='');
       await loadData();
-    } else { console.error('Server error:', data); alert(data.error||'خطأ في الإضافة: '+JSON.stringify(data)); }
+    } else alert(data.error||'خطأ في الإضافة');
   } catch(e) { alert('تعذر الاتصال'); } finally { showLoader(false); }
 }
 

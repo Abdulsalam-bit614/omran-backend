@@ -7,7 +7,6 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_iGYKUZqE_Ku5Z8QAqNFM8JN
 const bcrypt = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 
-
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME || 'dwlmqgdua',
     api_key: process.env.CLOUDINARY_KEY || '332324852498996',
@@ -130,8 +129,6 @@ mongoose.connect(process.env.MONGODB_URI)
 // ══ Models ══
 const UserSchema = new mongoose.Schema({
     userId:       { type: String, unique: true },
-    shopName:     { type: String, default: '' },
-    shopDesc:     { type: String, default: '' },
     name:         { type: String, required: true },
     phone:        { type: String, unique: true, sparse: true },
     email:        { type: String, unique: true, sparse: true },
@@ -267,8 +264,6 @@ const MonitorRequestSchema = new mongoose.Schema({
     status:     { type: String, default: 'pending' }, // pending | assigned | active | done
     monitorId:  { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     monitorName:{ type: String, default: '' },
-    rating: { type: Number, default: 0 },
-    ratingComment: { type: String, default: '' },
 }, { timestamps: true });
 const MonitorRequest = mongoose.model('MonitorRequest', MonitorRequestSchema);
 
@@ -352,43 +347,9 @@ const Review = mongoose.model('Review', ReviewSchema);
 // ══ Auth Routes ══
 
 // ══ Send Verification Code ══
-// إرسال OTP عبر SMS
-app.post('/api/auth/send-sms-code', async (req, res) => {
-    try {
-        const { phone } = req.body;
-        if(!phone) return res.status(400).json({ error: 'رقم الهاتف مطلوب' });
-        if (!rateLimit('sms:' + phone, 3, 10 * 60 * 1000)) {
-            return res.status(429).json({ error: 'حاولت كثيراً — انتظر 10 دقائق' });
-        }
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        otpCodes.set(phone, { code, expires: Date.now() + 10 * 60 * 1000 });
-        const sent = await sendSMS(phone, `كود تحقق عُمران: ${code}
-صالح لمدة 10 دقائق`);
-        if(!sent) return res.status(500).json({ error: 'تعذر إرسال الكود — تأكد من الرقم' });
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
-// التحقق من كود SMS
-app.post('/api/auth/verify-sms-code', async (req, res) => {
-    try {
-        const { phone, code } = req.body;
-        const stored = otpCodes.get(phone);
-        if(!stored) return res.status(400).json({ error: 'الكود غير موجود أو انتهت صلاحيته' });
-        if(Date.now() > stored.expires) { otpCodes.delete(phone); return res.status(400).json({ error: 'انتهت صلاحية الكود' }); }
-        if(stored.code !== code) return res.status(400).json({ error: 'الكود غير صحيح' });
-        otpCodes.delete(phone);
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
 app.post('/api/auth/send-code', async (req, res) => {
     try {
         const { email, name } = req.body;
-        // Rate limit — 3 طلبات كل 10 دقائق لكل إيميل
-        if (!rateLimit('otp:' + email, 3, 10 * 60 * 1000)) {
-            return res.status(429).json({ error: 'حاولت كثيراً — انتظر 10 دقائق قبل إعادة المحاولة' });
-        }
         if (!email) return res.status(400).json({ error: 'أدخل الإيميل' });
         console.log('📧 إرسال كود لـ:', email);
         await sendVerificationEmail(email, name || 'مستخدم');
@@ -418,8 +379,6 @@ app.post('/api/auth/verify-code', async (req, res) => {
 app.post('/api/auth/register', async (req, res) => {
     try {
         const userData = req.body;
-        // تحويل الإيميل لحروف صغيرة
-        if (userData.email) userData.email = userData.email.toLowerCase().trim();
         if (!userData.phone && !userData.email)
             return res.status(400).json({ error: 'يجب إدخال رقم الهاتف أو البريد الإلكتروني' });
 
@@ -480,7 +439,6 @@ function phoneVariants(phone) {
   variants.add(p);
   // حول 00 → +
   if (p.startsWith('00')) p = '+' + p.slice(2);
-  else if (!p.startsWith('+') && !p.startsWith('0') && p.length > 8) p = '+' + p;
   variants.add(p);
   // بدون +
   const noPlus = p.startsWith('+') ? p.slice(1) : p;
@@ -511,18 +469,15 @@ function phoneVariants(phone) {
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { id, phone, email, password } = req.body;
-        const rawIdentifier = (id || phone || email || '').trim();
-        // إذا إيميل — حوّله لصغير
-        const identifier = rawIdentifier.includes('@') 
-            ? rawIdentifier.toLowerCase() 
-            : rawIdentifier;
-        // توليد كل الصيغ الممكنة للرقم
+        const identifier = id || phone || email;
+        const normalized = normalizePhone(identifier);
+        const normId = normalizePhone(identifier);
+        // توليد كل الصيغ الممكنة
         const allVariants = phoneVariants(identifier);
         const user = await User.findOne({
             $or: [
                 { phone: { $in: allVariants } },
-                { email: identifier },
-                { email: rawIdentifier.toLowerCase() }
+                { email: identifier }
             ]
         });
         if (!user) return res.status(401).json({ message: 'خطأ في بيانات الدخول' });
@@ -574,7 +529,7 @@ app.post('/api/upload/avatar', async (req, res) => {
             overwrite: true,
             transformation: [{ width: 300, height: 300, crop: 'fill', gravity: 'face' }]
         });
-        await User.findByIdAndUpdate(userId, { avatar: result.secure_url });
+        await require('mongoose').model('User').findByIdAndUpdate(userId, { avatar: result.secure_url });
         res.json({ success: true, url: result.secure_url });
     } catch(e) { res.status(500).json({ error: 'فشل الرفع' }); }
 });
@@ -657,84 +612,6 @@ app.post('/api/pros/add', async (req, res) => {
         await pro.save();
         res.status(201).json({ success: true, data: pro });
     } catch(e) { res.status(400).json({ error: 'خطأ في الإضافة' }); }
-});
-
-// ══ Delete User Route ══
-app.delete('/api/admin/delete/:id', async (req, res) => {
-    try {
-        await User.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ في الحذف' }); }
-});
-app.delete('/api/admin/user/:id', async (req, res) => {
-    try {
-        await User.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ في الحذف' }); }
-});
-
-// ══ Sellers Route ══
-app.get('/api/sellers', async (req, res) => {
-    try {
-        const sellers = await User.find({ role: 'seller', blocked: { $ne: true } })
-            .select('_id name shopName shopDesc city phone avatar')
-            .sort({ createdAt: -1 })
-            .lean();
-        res.json(sellers);
-    } catch(e) { res.status(500).json([]); }
-});
-
-app.get('/api/sellers/:id', async (req, res) => {
-    try {
-        const seller = await User.findById(req.params.id)
-            .select('_id name shopName shopDesc city phone avatar')
-            .lean();
-        if(!seller) return res.status(404).json({ error: 'المحل غير موجود' });
-        const products = await Product.find({ sellerId: req.params.id, status: 'active' })
-            .sort({ createdAt: -1 })
-            .lean();
-        res.json({ seller, products });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
-// ══ Monitors Route ══
-app.get('/api/monitors', async (req, res) => {
-    try {
-        const monitors = await User.find({ role: 'monitor', blocked: { $ne: true } })
-            .select('_id name phone city spec')
-            .sort({ createdAt: -1 });
-        res.json(monitors);
-    } catch(e) { res.status(500).json([]); }
-});
-
-// ══ Admin Add User Route ══
-app.post('/api/admin/add-user', async (req, res) => {
-    try {
-        const { name, phone, email, password, role, spec, city, village, description, experience, wa } = req.body;
-        if (!name) return res.status(400).json({ error: 'الاسم مطلوب' });
-        if (!phone && !email) return res.status(400).json({ error: 'رقم الهاتف أو الإيميل مطلوب' });
-        // تحقق من عدم التكرار
-        const orQuery = [];
-        if (phone) { const variants = phoneVariants(phone); orQuery.push({ phone: { $in: variants } }); }
-        if (email) orQuery.push({ email: email.toLowerCase().trim() });
-        if (orQuery.length) {
-            const existing = await User.findOne({ $or: orQuery });
-            if (existing) return res.status(400).json({ error: 'المستخدم مسجل مسبقاً' });
-        }
-        const hashed = await bcrypt.hash(password || phone || '123456', 10);
-        const emailVal = email ? email.toLowerCase().trim() : undefined;
-        const user = new User({
-            name, phone: phone||'',
-            ...(emailVal ? { email: emailVal } : {}),
-            password: hashed, role: role||'pro',
-            spec: spec||'', city: city||'', village: village||'',
-            description: description||'', experience: experience||'',
-            wa: wa||phone||'',
-            userId: 'OMR-' + Math.floor(100000 + Math.random() * 900000)
-        });
-        await user.save();
-        res.json({ success: true, userId: user._id });
-    } catch(e) { console.error(e); res.status(500).json({ error: 'خطأ في الإضافة: ' + e.message }); }
 });
 
 // ══ Reviews Routes (جديد) ══
@@ -918,7 +795,12 @@ app.put('/api/admin/verify/:id', async (req, res) => {
     } catch(e) { res.status(500).json({ error: 'خطأ' }); }
 });
 
-
+app.delete('/api/admin/delete/:id', async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
+});
 
 app.put('/api/admin/block/:id', async (req, res) => {
     try {
@@ -1179,15 +1061,10 @@ app.get('/api/admin/stats', async (req, res) => {
 app.post('/api/auth/forgot-password', async (req, res) => {
     try {
         const { email, phone } = req.body;
-        // Rate limit — 3 طلبات كل 10 دقائق
-        const limitKey = 'forgot:' + (email||phone||'unknown');
-        if (!rateLimit(limitKey, 3, 10 * 60 * 1000)) {
-            return res.status(429).json({ error: 'حاولت كثيراً — انتظر 10 دقائق' });
-        }
         if (!email && !phone) return res.status(400).json({ error: 'أدخل الإيميل أو رقم الهاتف' });
         // البحث عن المستخدم
         let user = null;
-        if (email) user = await User.findOne({ email: email.toLowerCase().trim() });
+        if (email) user = await User.findOne({ email });
         if (!user && phone) {
             const variants = phoneVariants(phone);
             user = await User.findOne({ phone: { $in: variants } });
@@ -1217,200 +1094,6 @@ app.post('/api/auth/reset-password', async (req, res) => {
         await User.findOneAndUpdate({ email }, { password: hashed });
         res.json({ success: true });
     } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
-// ══ OTP Codes Store ══
-const otpCodes = new Map();
-
-// ══ Memory Cache ══
-const cache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 دقائق
-
-function getCache(key){ 
-    const item = cache.get(key);
-    if(!item) return null;
-    if(Date.now() > item.expires){ cache.delete(key); return null; }
-    return item.data;
-}
-function setCache(key, data){ 
-    cache.set(key, { data, expires: Date.now() + CACHE_TTL });
-}
-function clearCache(key){ cache.delete(key); }
-
-// ══ Twilio SMS ══
-async function sendSMS(to, body){
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const msgService = process.env.TWILIO_MSG_SERVICE;
-    if(!accountSid || !authToken) return false;
-    try{
-        const params = new URLSearchParams();
-        params.append('To', to);
-        params.append('Body', body);
-        if(msgService) params.append('MessagingServiceSid', msgService);
-        else params.append('From', process.env.TWILIO_PHONE);
-        const res = await fetch(
-            `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-            {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
-            }
-        );
-        const data = await res.json();
-        return res.ok;
-    }catch(e){ console.error('SMS error:', e); return false; }
-}
-
-// ══ Rate Limiting ══
-const rateLimitMap = new Map();
-
-function rateLimit(key, maxRequests, windowMs){
-    const now = Date.now();
-    const windowData = rateLimitMap.get(key) || { count: 0, start: now };
-    if (now - windowData.start > windowMs) {
-        rateLimitMap.set(key, { count: 1, start: now });
-        return true;
-    }
-    if (windowData.count >= maxRequests) return false;
-    windowData.count++;
-    rateLimitMap.set(key, windowData);
-    return true;
-}
-
-// تنظيف كل ساعة
-setInterval(() => {
-    const now = Date.now();
-    for (const [key, data] of rateLimitMap.entries()) {
-        if (now - data.start > 3600000) rateLimitMap.delete(key);
-    }
-}, 3600000);
-
-// ══ AI Image Analysis Route ══
-app.post('/api/ai/analyze-image', async (req, res) => {
-    try {
-        const { imageBase64, mediaType } = req.body;
-        if (!imageBase64) return res.status(400).json({ error: 'الصورة مطلوبة' });
-
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
-
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { inline_data: { mime_type: mediaType || 'image/jpeg', data: imageBase64 } },
-                            { text: `أنت مساعد في منصة عُمران للحرفيين السوريين. انظر لهذه الصورة وحلل المشكلة الموجودة فيها.
-أجب بـ JSON فقط بدون أي نص إضافي أو backticks بهذا الشكل:
-{"problem":"وصف المشكلة بجملة واحدة واضحة","severity":"بسيطة أو متوسطة أو خطيرة","canDIY":true,"diySteps":["خطوة 1","خطوة 2","خطوة 3"],"diyTools":["الأداة المطلوبة"],"needsCraftsman":true,"craftsmanType":"نوع الحرفي أو null","urgency":"فوري أو قريباً أو يمكن الانتظار","tip":"نصيحة مفيدة قصيرة"}` }
-                        ]
-                    }]
-                })
-            }
-        );
-
-        if (!response.ok) {
-            const err = await response.json();
-            return res.status(500).json({ error: 'خطأ في تحليل الصورة: ' + (err.error?.message || 'حاول مرة ثانية') });
-        }
-
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(clean);
-        res.json({ success: true, result: parsed });
-
-    } catch(e) {
-        console.error('AI analyze error:', e);
-        res.status(500).json({ error: 'تعذر تحليل الصورة — حاول مرة ثانية' });
-    }
-});
-
-// ══ AI Chat Route ══
-app.post('/api/ai/chat', async (req, res) => {
-    try {
-        const { messages, city } = req.body;
-        if (!messages || !messages.length) return res.status(400).json({ error: 'الرسائل مطلوبة' });
-
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
-
-        // جلب بيانات حقيقية من قاعدة البيانات
-        const pros = await User.find({ role: 'pro', blocked: { $ne: true } })
-            .select('name spec city village phone avgRating reviewCount isFeatured')
-            .sort({ avgRating: -1 })
-            .limit(50)
-            .lean();
-
-        const prosData = pros.map(p => 
-            `${p.name} | ${p.spec} | ${p.city||''} ${p.village||''} | تقييم: ${p.avgRating||0}/5 (${p.reviewCount||0} تقييم)${p.isFeatured?' | مميز':''}`
-        ).join('\n');
-
-        const systemPrompt = `أنت مساعد ذكي لمنصة عُمران — منصة الحرفيين السوريين.
-اسمك "مساعد عُمران" وتتحدث باللهجة العربية السورية البسيطة.
-        
-معلومات المنصة:
-- عُمران تربط الحرفيين بأصحاب الحاجة في سوريا
-- الموقع: omransy.com
-- التخصصات: كهربائي، سباك، نجار، دهان، بناء، بلاط، جبس، حداد، مطابخ، مهندس، هدم، آليات، محامي، مراقب
-- سوق عُمران: بيع وشراء مواد البناء
-- خدمة المراقب: متابعة البناء عن بُعد للمغتربين
-- طلبات العمل: ينشر العميل طلب والحرفيون يتقدمون بعروض
-
-قائمة الحرفيين المسجلين الحاليين:
-${prosData}
-
-قواعد الإجابة:
-1. لو سألك عن أفضل حرفي — رتّب من قاعدة البيانات الفعلية حسب التقييم
-2. لو سألك عن تخصص — اعطه الحرفيين المناسبين من القائمة
-3. لو سألك كيف يستخدم المنصة — اشرح بخطوات بسيطة
-4. لو سألك سؤال عام عن البناء أو الإصلاح — أجب بمعلومات مفيدة
-5. اجعل إجاباتك قصيرة وواضحة ومباشرة
-6. لا تخترع حرفيين غير موجودين في القائمة`;
-
-        // بناء محادثة Gemini
-        const lastMsgs = messages.slice(-6);
-        const geminiContents = [];
-        // إضافة system كمقدمة
-        geminiContents.push({ role: 'user', parts: [{ text: systemPrompt }] });
-        geminiContents.push({ role: 'model', parts: [{ text: 'تمام، أنا مساعد عُمران وجاهز للمساعدة!' }] });
-        // إضافة باقي الرسائل
-        for(const m of lastMsgs){
-            geminiContents.push({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: m.content }]
-            });
-        }
-
-        const response = await fetch(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: geminiContents })
-            }
-        );
-
-        if (!response.ok) {
-            const err = await response.json();
-            return res.status(500).json({ error: err.error?.message || 'خطأ في الخدمة' });
-        }
-
-        const data = await response.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'عذراً، تعذرت الإجابة';
-        res.json({ success: true, reply });
-
-    } catch(e) {
-        console.error('AI chat error:', e);
-        res.status(500).json({ error: 'تعذر الاتصال بالمساعد' });
-    }
 });
 
 // ══ Settings Routes ══
@@ -1501,87 +1184,6 @@ app.put('/api/reports/:id/action', async (req, res) => {
 });
 
 // ══ Monitor Routes ══
-// حذف طلب مراقب
-app.delete('/api/monitor/request/:id', async (req, res) => {
-    try {
-        const { clientId } = req.body;
-        const request = await MonitorRequest.findById(req.params.id);
-        if(!request) return res.status(404).json({ error: 'الطلب غير موجود' });
-        if(clientId !== 'admin' && String(request.clientId) !== String(clientId))
-            return res.status(403).json({ error: 'غير مصرح' });
-        // احذف التقارير المرتبطة
-        await MonitorReport.deleteMany({ requestId: req.params.id });
-        await MonitorRequest.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
-// تقييم المراقب بعد انتهاء المهمة
-app.post('/api/monitor/rate/:requestId', async (req, res) => {
-    try {
-        const { clientId, stars, comment } = req.body;
-        if(!stars || stars < 1 || stars > 5) return res.status(400).json({ error: 'التقييم غير صحيح' });
-        const request = await MonitorRequest.findById(req.params.requestId);
-        if(!request) return res.status(404).json({ error: 'الطلب غير موجود' });
-        if(String(request.clientId) !== String(clientId))
-            return res.status(403).json({ error: 'غير مصرح' });
-        // حفظ التقييم في الطلب
-        await MonitorRequest.findByIdAndUpdate(req.params.requestId, {
-            rating: stars, ratingComment: comment||''
-        });
-        // إشعار للمراقب
-        if(request.monitorId){
-            await new Notification({
-                userId: request.monitorId,
-                type: 'review',
-                message: `⭐ حصلت على تقييم ${stars}/5 من عميل — ${comment||''}`,
-                proId: clientId
-            }).save();
-        }
-        res.json({ success: true });
-    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
-});
-
-// ══ Monitor Report Routes ══
-
-// رفع تقرير يومي
-app.post('/api/monitor/report', async (req, res) => {
-    try {
-        const { requestId, monitorId, monitorName, clientId, text, images, day } = req.body;
-        if(!requestId || !monitorId || !text) return res.status(400).json({ error: 'أكمل البيانات' });
-        const report = await new MonitorReport({
-            requestId, monitorId, monitorName: monitorName||'',
-            clientId, text, images: images||[], day: day||1
-        }).save();
-        // إشعار للعميل
-        await new Notification({
-            userId: clientId,
-            type: 'monitor',
-            message: `📋 تقرير يومي جديد من مراقبك — اليوم ${day||1}: ${text.substring(0,50)}${text.length>50?'...':''}`,
-            proId: monitorId
-        }).save();
-        res.json({ success: true, report });
-    } catch(e) { console.error(e); res.status(500).json({ error: 'خطأ' }); }
-});
-
-// جلب تقارير طلب معين
-app.get('/api/monitor/reports/:requestId', async (req, res) => {
-    try {
-        const reports = await MonitorReport.find({ requestId: req.params.requestId })
-            .sort({ createdAt: -1 });
-        res.json(reports);
-    } catch(e) { res.status(500).json([]); }
-});
-
-// جلب مهام المراقب
-app.get('/api/monitor/requests/monitor/:monitorId', async (req, res) => {
-    try {
-        const tasks = await MonitorRequest.find({ 
-            monitorId: req.params.monitorId 
-        }).sort({ createdAt: -1 });
-        res.json(tasks);
-    } catch(e) { res.status(500).json([]); }
-});
 
 // طلب مراقب جديد من العميل
 app.post('/api/monitor/request', async (req, res) => {
@@ -1592,19 +1194,8 @@ app.post('/api/monitor/request', async (req, res) => {
     }
     try {
         const { clientId, clientName, proId, proName, phone, notes } = req.body;
-        if (!clientId) return res.status(400).json({ error: 'بيانات ناقصة' });
-        // قبول proId كـ string أو ObjectId
-        const proIdVal = mongoose.Types.ObjectId.isValid(proId) ? proId : null;
-        const clientIdVal = mongoose.Types.ObjectId.isValid(clientId) ? clientId : null;
-        if(!clientIdVal) return res.status(400).json({ error: 'معرف العميل غير صحيح' });
-        const req_ = await new MonitorRequest({ 
-            clientId: clientIdVal, 
-            clientName: clientName||'', 
-            proId: proIdVal||clientIdVal, 
-            proName: proName||'طلب مباشر', 
-            phone: phone||'', 
-            notes: notes||'' 
-        }).save();
+        if (!clientId || !proId) return res.status(400).json({ error: 'بيانات ناقصة' });
+        const req_ = await new MonitorRequest({ clientId, clientName, proId, proName, phone: phone||'', notes: notes||'' }).save();
         // إشعار للأدمن
         const admins = await User.find({ role: 'admin' });
         for(const admin of admins){
@@ -1639,36 +1230,9 @@ app.get('/api/monitor/requests/client/:clientId', async (req, res) => {
 app.put('/api/monitor/assign/:requestId', async (req, res) => {
     try {
         const { monitorId, monitorName } = req.body;
-        const request = await MonitorRequest.findByIdAndUpdate(req.params.requestId, {
+        await MonitorRequest.findByIdAndUpdate(req.params.requestId, {
             monitorId, monitorName, status: 'assigned'
-        }, { new: false });
-
-        if(request){
-            // 1. إشعار للعميل
-            if(request.clientId){
-                await new Notification({
-                    userId: request.clientId,
-                    type: 'monitor',
-                    message: `✅ تم تعيين مراقب لطلبك — ${monitorName} سيتواصل معك قريباً`,
-                    proId: monitorId || request.clientId
-                }).save();
-            }
-            // 2. إشعار تفصيلي للمراقب
-            if(monitorId){
-                const details = [
-                    `👤 العميل: ${request.clientName}`,
-                    `📞 الهاتف: ${request.phone||'غير محدد'}`,
-                    `📝 التفاصيل: ${request.notes||'لا توجد ملاحظات'}`,
-                    `📅 تاريخ الطلب: ${new Date(request.createdAt).toLocaleDateString('ar-SY')}`
-                ].join(' | ');
-                await new Notification({
-                    userId: monitorId,
-                    type: 'monitor',
-                    message: `🏗️ مهمة جديدة بانتظارك! ${details}`,
-                    proId: request.clientId || monitorId
-                }).save();
-            }
-        }
+        });
         res.json({ success: true });
     } catch(e) { res.status(500).json({ error: 'خطأ' }); }
 });
@@ -1677,23 +1241,38 @@ app.put('/api/monitor/assign/:requestId', async (req, res) => {
 app.put('/api/monitor/status/:requestId', async (req, res) => {
     try {
         const { status } = req.body;
-        const request = await MonitorRequest.findByIdAndUpdate(
-            req.params.requestId, { status }, { new: false }
-        );
-        // لو انتهت المهمة — أرسل إشعار للعميل للتقييم
-        if(status === 'done' && request?.clientId){
-            await new Notification({
-                userId: request.clientId,
-                type: 'review',
-                message: `🏁 انتهت مهمة المراقب! كيف كانت تجربتك؟ قيّم المراقب من صفحة طلباتك`,
-                proId: request.monitorId || request.clientId
-            }).save();
-        }
+        await MonitorRequest.findByIdAndUpdate(req.params.requestId, { status });
         res.json({ success: true });
     } catch(e) { res.status(500).json({ error: 'خطأ' }); }
 });
 
+// رفع تقرير يومي
+app.post('/api/monitor/report', async (req, res) => {
+    try {
+        const { requestId, monitorId, monitorName, note, rating, images } = req.body;
+        if (!requestId || !note) return res.status(400).json({ error: 'بيانات ناقصة' });
+        const report = await new MonitorReport({ requestId, monitorId, monitorName, note, rating: rating||5, images: images||[] }).save();
+        // إشعار للعميل
+        const request = await MonitorRequest.findById(requestId);
+        if(request?.clientId){
+            await new Notification({
+                userId: request.clientId,
+                type: 'monitor',
+                message: `${monitorName} رفع تقريراً جديداً عن شغلك`,
+                proId: monitorId
+            }).save();
+        }
+        res.json({ success: true, report });
+    } catch(e) { res.status(500).json({ error: 'خطأ' }); }
+});
 
+// جلب تقارير طلب معين
+app.get('/api/monitor/reports/:requestId', async (req, res) => {
+    try {
+        const reports = await MonitorReport.find({ requestId: req.params.requestId }).sort({ createdAt: -1 });
+        res.json(reports);
+    } catch(e) { res.status(500).json([]); }
+});
 
 // ══ Market Routes ══
 
@@ -2004,15 +1583,6 @@ async function seedSpecs(){
   }
   console.log('✅ Specs seeded');
 }
-
-// ══ 404 Handler ══
-app.use((req, res) => {
-    if(req.path.startsWith('/api')){
-        return res.status(404).json({ error: 'المسار غير موجود' });
-    }
-    // إرجاع index.html للـ SPA
-    res.sendFile('index.html', { root: __dirname });
-});
 
 server.listen(PORT, () => {
   console.log(`📡 Server Running on ${PORT}`);
