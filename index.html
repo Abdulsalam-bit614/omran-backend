@@ -19,7 +19,6 @@ html,body{height:100%;font-family:'Tajawal',sans-serif;background:var(--bg);colo
 input,textarea,select,button{font-family:'Tajawal',sans-serif}
 a{text-decoration:none;color:inherit}
 
-  
 /* ══ APP ══ */
 #app{width:100%;max-width:480px;height:100vh;position:relative;overflow:hidden;background:var(--bg);margin:0 auto;box-shadow:0 0 30px rgba(0,0,0,.1)}
 
@@ -192,9 +191,6 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 #pg-chatroom.active{display:flex;flex-direction:column}
 #pg-chatroom .detail-header{flex-shrink:0}
 #pg-chatroom > div:last-child{flex-shrink:0;margin-bottom:0}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes fadeInUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
 
 /* ══ CHAT ══ */
 .chat-msg-me{display:flex;justify-content:flex-end;margin-bottom:8px}
@@ -409,12 +405,6 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
         </div>
         <span class="srv-nm">السوق</span>
       </div>
-      <div class="srv-item" onclick="showPage('pg-saleh')">
-        <div class="srv-ic" style="background:#f0fdf4">
-          <span class="material-icons-round" style="color:#16a34a;font-size:26px">troubleshoot</span>
-        </div>
-        <span class="srv-nm">صلّح بنفسك</span>
-      </div>
     </div>
 
     <!-- بانر الإعلانات -->
@@ -585,14 +575,6 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
       <div class="fg pass-wrap"><input class="fi" type="password" id="new-pass" placeholder="كلمة المرور الجديدة"><button class="pass-eye" onclick="togglePass('new-pass')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div class="fg pass-wrap"><input class="fi" type="password" id="confirm-pass" placeholder="تأكيد كلمة المرور"><button class="pass-eye" onclick="togglePass('confirm-pass')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <button class="btn btn-secondary" onclick="changePassword()">تغيير كلمة المرور</button>
-    </div>
-
-    <!-- المراقب فقط: مهامي -->
-    <div class="profile-section" id="monitor-tasks-section" style="display:none">
-      <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:10px">🏗️ مهامي كمراقب</div>
-      <div id="monitor-tasks-list">
-        <div style="text-align:center;padding:20px;color:#94a3b8;font-size:13px">جاري التحميل...</div>
-      </div>
     </div>
 
     <!-- العميل فقط: طلباتي -->
@@ -895,53 +877,6 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
   <div id="product-detail-body" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px"></div>
 </div>
 
-<!-- ══ SALEH BINAFSAK ══ -->
-<div id="pg-saleh" class="page">
-  <div style="display:flex;align-items:center;padding:14px 16px;gap:12px;background:#0f172a;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0">
-    <button onclick="goBack()" style="background:rgba(255,255,255,.1);border:none;cursor:pointer;padding:8px 12px;display:flex;border-radius:8px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    </button>
-    <div style="flex:1">
-      <div style="font-size:16px;font-weight:900;color:#fff">صلّح بنفسك 🔍</div>
-      <div style="font-size:11px;color:#94a3b8">صوّر المشكلة — الذكاء الاصطناعي يشخّصها</div>
-    </div>
-  </div>
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#0f172a 100%);padding:20px 16px 100px">
-    
-    <!-- Upload Zone -->
-    <div id="saleh-upload-zone" onclick="document.getElementById('saleh-img-input').click()" style="background:rgba(255,255,255,.05);border:2px dashed rgba(255,255,255,.2);border-radius:20px;padding:40px 20px;text-align:center;cursor:pointer;margin-bottom:16px;transition:all .2s">
-      <div style="font-size:48px;margin-bottom:12px">📸</div>
-      <div style="font-weight:800;font-size:16px;color:#fff;margin-bottom:6px">صوّر المشكلة</div>
-      <div style="color:#64748b;font-size:13px">اضغط للتصوير أو رفع صورة</div>
-      <input type="file" id="saleh-img-input" accept="image/*" capture="environment" style="display:none" onchange="onSalehImgChange(this)">
-    </div>
-
-    <!-- Preview -->
-    <div id="saleh-preview-wrap" style="display:none;margin-bottom:16px;position:relative;border-radius:20px;overflow:hidden">
-      <img id="saleh-preview-img" style="width:100%;max-height:280px;object-fit:cover;display:block">
-      <button onclick="resetSaleh()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit">✕ تغيير</button>
-    </div>
-
-    <!-- Analyze Button -->
-    <button id="saleh-analyze-btn" onclick="analyzeSaleh()" style="display:none;width:100%;padding:16px;background:linear-gradient(135deg,#2563eb,#1e3a8a);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:20px;font-family:inherit;box-shadow:0 8px 24px rgba(37,99,235,.4)">
-      🔍 حلّل المشكلة بالذكاء الاصطناعي
-    </button>
-
-    <!-- Loading -->
-    <div id="saleh-loading" style="display:none;background:rgba(255,255,255,.05);border-radius:20px;padding:30px;text-align:center;margin-bottom:20px;border:1px solid rgba(255,255,255,.1)">
-      <div id="saleh-spinner" style="width:48px;height:48px;border:4px solid rgba(255,255,255,.1);border-top:4px solid #3b82f6;border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite"></div>
-      <div style="font-weight:700;color:#fff;margin-bottom:4px">جاري التحليل...</div>
-      <div style="color:#64748b;font-size:13px">الذكاء الاصطناعي يفحص الصورة</div>
-    </div>
-
-    <!-- Error -->
-    <div id="saleh-error" style="display:none;background:#fef2f2;color:#dc2626;border-radius:14px;padding:16px;margin-bottom:20px;font-weight:600;font-size:14px;text-align:center"></div>
-
-    <!-- Result -->
-    <div id="saleh-result" style="display:none"></div>
-  </div>
-</div>
-
 <div id="pg-about" class="page"><div class="tb"><button class="back-btn-white" onclick="showPage('pg-home')">← رجوع</button><span style="font-weight:900;font-size:15px">من نحن</span></div><div style="padding:20px"><div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px"><div style="font-size:40px;text-align:center;margin-bottom:12px">🏗️</div><h2 style="text-align:center;color:var(--blue);margin-bottom:10px">عُمران</h2><p style="color:var(--text2);line-height:1.8;font-size:14px">منصة عُمران هي منصة رقمية سورية تهدف إلى ربط أصحاب الحاجة بالحرفيين في مجال البناء والتشييد.</p></div></div></div>
 <div id="pg-faq" class="page"><div class="tb"><button class="back-btn-white" onclick="showPage('pg-home')">← رجوع</button><span style="font-weight:900;font-size:15px">الأسئلة الشائعة</span></div><div id="faq-list" style="padding:16px;padding-bottom:100px"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">جاري التحميل...</div></div></div></div>
 <div id="pg-contact" class="page"><div class="tb"><button class="back-btn-white" onclick="showPage('pg-home')">← رجوع</button><span style="font-weight:900;font-size:15px">تواصل معنا</span></div><div id="contact-list" style="padding:16px;padding-bottom:100px"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">جاري التحميل...</div></div></div></div>
@@ -1037,12 +972,6 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
     </span>
     <span class="menu-item-label">سوق عُمران</span>
-  </div>
-  <div class="menu-item" onclick="goMenu('pg-saleh')">
-    <span class="menu-item-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </span>
-    <span class="menu-item-label">صلّح بنفسك 🔍</span>
   </div>
   <div class="menu-item" onclick="goMenu('pg-jobs')">
     <span class="menu-item-icon">
@@ -1354,12 +1283,6 @@ function onLogin(){
   const en=document.getElementById('edit-name');if(en)en.value=curUser.name||'';
   // تحميل طلبات العميل
   if(isClient)loadClientRequests();
-  // لو مراقب — أظهر مهامه
-  if(curUser.type==='monitor'){
-    const s=document.getElementById('monitor-tasks-section');
-    if(s) s.style.display='';
-    loadMonitorTasks();
-  }
   const av=document.getElementById('profile-av');
   const saved=localStorage.getItem('userAvatar_'+curUser.id);
   if(saved)av.innerHTML=`<img src="${saved}">`;else av.textContent=curUser.name[0];
@@ -1371,24 +1294,14 @@ function onLogin(){
 }
 
 function doLogout(){
-  curUser=null;
-  localStorage.removeItem('token');
-  localStorage.removeItem('userName');
-  localStorage.removeItem('userType');
-  localStorage.removeItem('userPhone');
-  localStorage.removeItem('omran_reg_draft');
+  curUser=null;localStorage.removeItem('token');localStorage.removeItem('userName');localStorage.removeItem('userType');localStorage.removeItem('userPhone');
   myWorkPhotos=[];
-  // مسح حقول الدخول
-  const fields = ['log-id','log-pass','reg-name','reg-phone','reg-email',
-                  'reg-pass','forgot-identifier','forgot-pass','forgot-code'];
-  fields.forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.value='';
-  });
-  // إيقاف socket
-  if(socket){ socket.disconnect(); socket=null; }
+  document.getElementById('profile-login-msg').style.display='';
+  document.getElementById('profile-content').style.display='none';
+  document.getElementById('admin-btn').style.display='none';
+  document.getElementById('menu-user-info').style.display='none';
+  document.getElementById('menu-logout').style.display='none';
   showPage('pg-auth');
-  switchAuth('login');
 }
 
 function restoreSession(){
@@ -1854,13 +1767,6 @@ async function loadClientRequests(){
       </div>
       <div style="font-size:11px;color:var(--text3)">📅 ${new Date(r.createdAt).toLocaleDateString('ar-SY')}</div>
       ${r.monitorName?`<div style="font-size:11px;color:var(--blue);margin-top:4px">👁️ المراقب: ${r.monitorName}</div>`:''}
-      ${r.status==='assigned'||r.status==='active'||r.status==='done'?`
-      <button onclick="viewMonitorReports('${r._id}','${r.clientName}')" style="width:100%;margin-top:8px;padding:8px;background:#f0f4ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📋 عرض تقارير المراقب</button>`:''}
-      ${r.status==='pending'?`
-      <button onclick="deleteMonitorRequest('${r._id}')" style="width:100%;margin-top:8px;padding:8px;background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑️ إلغاء الطلب</button>`:''}
-      ${r.status==='done' && !r.rating?`
-      <button onclick="openMonitorRating('${r._id}')" style="width:100%;margin-top:8px;padding:8px;background:#fef9c3;color:#a16207;border:1px solid #fde68a;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">⭐ قيّم المراقب</button>`:''}
-      ${r.rating?`<div style="margin-top:8px;text-align:center;font-size:13px;color:#f59e0b">${'⭐'.repeat(r.rating)} قيّمت هذه الخدمة</div>`:''}
     </div>`).join('');
   }catch(e){}
 }
@@ -1907,7 +1813,7 @@ function renderNotifications(){
   }
   const icons = {
     review:'⭐', call:'📞', whatsapp:'💬', message:'💬',
-    monitor:'🏗️', job:'📋', offer:'💼', market:'🧱',
+    monitor:'👁️', job:'📋', offer:'💼', market:'🧱',
     report:'🚩', warning:'⚠️'
   };
   el.innerHTML = notifData.map((n,i) => `
@@ -2762,347 +2668,6 @@ function onChatStopTyping(){
   if(socket?.connected && curUser?.id && currentChat.otherId){
     socket.emit('stopTyping',{from:curUser.id,to:currentChat.otherId});
   }
-}
-
-// ══ MONITOR TASKS ══
-async function loadMonitorTasks(){
-  const el = document.getElementById('monitor-tasks-list');
-  if(!el || !curUser) return;
-  try{
-    const res = await fetch(`${API}/monitor/requests/monitor/${curUser.id}`);
-    const tasks = await res.json();
-    if(!tasks.length){
-      el.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;font-size:13px">لا توجد مهام حالياً</div>';
-      return;
-    }
-    const statusMap = {pending:'⏳ بانتظار البدء', assigned:'✅ تم التعيين', active:'🔄 جارية', done:'🏁 منتهية'};
-    el.innerHTML = tasks.map(t=>`
-      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-size:13px;font-weight:800;color:#111">${t.clientName}</div>
-          <span style="font-size:11px;font-weight:700;background:#f0fdf4;color:#16a34a;padding:3px 8px;border-radius:6px">${statusMap[t.status]||t.status}</span>
-        </div>
-        <div style="font-size:12px;color:#64748b;margin-bottom:4px">📞 ${t.phone||'—'}</div>
-        <div style="font-size:12px;color:#475569;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:10px">${t.notes||'لا توجد ملاحظات'}</div>
-        <div style="font-size:10px;color:#94a3b8;margin-bottom:10px">📅 ${new Date(t.createdAt).toLocaleDateString('ar-SY')}</div>
-        <!-- فورم رفع تقرير -->
-        <div id="report-form-${t._id}" style="display:none;background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:8px">
-          <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:6px">اليوم رقم</div>
-          <input id="report-day-${t._id}" type="number" min="1" value="1" class="fi" style="margin-bottom:8px;padding:8px;font-size:13px">
-          <textarea id="report-text-${t._id}" class="fi" placeholder="تفاصيل العمل اليوم..." style="min-height:70px;margin-bottom:8px;font-size:13px"></textarea>
-          <div id="report-imgs-prev-${t._id}" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
-          <label style="display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px dashed #cbd5e1;border-radius:8px;cursor:pointer;background:#fff;color:#64748b;font-size:12px;margin-bottom:8px">
-            📷 إضافة صور
-            <input type="file" accept="image/*" multiple style="display:none" onchange="onReportImgsChange(this,'${t._id}')">
-          </label>
-          <div style="display:flex;gap:8px">
-            <button onclick="submitReport_Monitor('${t._id}','${t.clientId||''}')" style="flex:1;padding:9px;background:#1e3a8a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">إرسال التقرير</button>
-            <button onclick="document.getElementById('report-form-${t._id}').style.display='none'" style="padding:9px 12px;background:#f1f5f9;color:#333;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit">إلغاء</button>
-          </div>
-        </div>
-        <button onclick="toggleReportForm('${t._id}')" style="width:100%;padding:9px;background:#f0f4ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📋 رفع تقرير يومي</button>
-      </div>`).join('');
-  }catch(e){
-    el.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;font-size:13px">تعذر التحميل</div>';
-  }
-}
-
-// ══ MONITOR REPORTS ══
-const reportImages = {};
-
-function toggleReportForm(taskId){
-  const el = document.getElementById('report-form-'+taskId);
-  if(el) el.style.display = el.style.display==='none' ? '' : 'none';
-}
-
-function onReportImgsChange(input, taskId){
-  if(!reportImages[taskId]) reportImages[taskId] = [];
-  const files = Array.from(input.files);
-  if(reportImages[taskId].length + files.length > 5){ alert('الحد 5 صور'); return; }
-  files.forEach(file=>{
-    const reader = new FileReader();
-    reader.onload = e => {
-      reportImages[taskId].push(e.target.result);
-      renderReportImgs(taskId);
-    };
-    reader.readAsDataURL(file);
-  });
-  input.value='';
-}
-
-function renderReportImgs(taskId){
-  const el = document.getElementById('report-imgs-prev-'+taskId);
-  if(!el) return;
-  el.innerHTML = (reportImages[taskId]||[]).map((src,i)=>`
-    <div style="position:relative;width:60px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0">
-      <img src="${src}" style="width:100%;height:100%;object-fit:cover">
-      <button onclick="removeReportImg('${taskId}',${i})" style="position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center">✕</button>
-    </div>`).join('');
-}
-
-function removeReportImg(taskId, idx){
-  if(reportImages[taskId]) reportImages[taskId].splice(idx,1);
-  renderReportImgs(taskId);
-}
-
-async function submitReport_Monitor(taskId, clientId){
-  const text = document.getElementById('report-text-'+taskId)?.value.trim();
-  const day = document.getElementById('report-day-'+taskId)?.value || 1;
-  if(!text){ alert('أدخل تفاصيل التقرير'); return; }
-  const btn = document.querySelector(`#report-form-${taskId} button`);
-  if(btn){ btn.textContent='جاري الإرسال...'; btn.disabled=true; }
-  try{
-    // رفع الصور
-    let uploaded = [];
-    for(const img of (reportImages[taskId]||[])){
-      try{
-        const r = await fetch(`${API}/upload/photo`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:img,userId:curUser.id})});
-        const d = await r.json();
-        if(d.url) uploaded.push(d.url);
-      }catch(e){}
-    }
-    const res = await fetch(`${API}/monitor/report`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        requestId: taskId,
-        monitorId: curUser.id,
-        monitorName: curUser.name,
-        clientId,
-        text, day: Number(day),
-        images: uploaded
-      })
-    });
-    const data = await res.json();
-    if(res.ok){
-      reportImages[taskId] = [];
-      document.getElementById('report-text-'+taskId).value='';
-      document.getElementById('report-day-'+taskId).value='1';
-      document.getElementById('report-form-'+taskId).style.display='none';
-      alert('✅ تم إرسال التقرير للعميل');
-    } else alert(data.error||'خطأ');
-  }catch(e){ alert('تعذر الاتصال'); }
-  finally{ if(btn){ btn.textContent='إرسال التقرير'; btn.disabled=false; } }
-}
-
-// ══ DELETE MONITOR REQUEST ══
-async function deleteMonitorRequest(requestId){
-  if(!confirm('إلغاء طلب المراقب نهائياً؟')) return;
-  try{
-    const res = await fetch(`${API}/monitor/request/${requestId}`,{
-      method:'DELETE',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({clientId:curUser.id})
-    });
-    if(res.ok){
-      alert('✅ تم إلغاء الطلب');
-      loadClientRequests();
-    } else {
-      const d = await res.json();
-      alert(d.error||'تعذر الإلغاء');
-    }
-  }catch(e){ alert('تعذر الاتصال'); }
-}
-
-// ══ MONITOR RATING ══
-let currentRatingRequestId = '';
-let currentMonitorRating = 0;
-
-function openMonitorRating(requestId){
-  currentRatingRequestId = requestId;
-  currentMonitorRating = 0;
-  // إنشاء modal التقييم
-  let modal = document.getElementById('monitor-rating-modal');
-  if(!modal){
-    modal = document.createElement('div');
-    modal.id = 'monitor-rating-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:flex;align-items:flex-end;justify-content:center;padding:20px';
-    modal.innerHTML = `
-      <div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:480px">
-        <div style="font-size:17px;font-weight:900;color:#111;margin-bottom:4px;text-align:center">قيّم المراقب</div>
-        <div style="font-size:13px;color:#94a3b8;margin-bottom:20px;text-align:center">كيف كانت تجربتك؟</div>
-        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px" id="rating-stars">
-          ${[1,2,3,4,5].map(i=>`<span onclick="setMonitorRating(${i})" id="mstar-${i}" style="font-size:36px;cursor:pointer;opacity:.3;transition:opacity .2s">⭐</span>`).join('')}
-        </div>
-        <textarea id="monitor-rating-comment" class="fi" placeholder="أضف تعليقاً (اختياري)..." style="min-height:70px;margin-bottom:12px;font-size:13px"></textarea>
-        <div style="display:flex;gap:10px">
-          <button onclick="submitMonitorRating()" style="flex:1;padding:13px;background:#1e3a8a;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">إرسال التقييم</button>
-          <button onclick="document.getElementById('monitor-rating-modal').style.display='none'" style="padding:13px 16px;background:#f1f5f9;color:#333;border:none;border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit">إلغاء</button>
-        </div>
-      </div>`;
-    document.body.appendChild(modal);
-  }
-  modal.style.display = 'flex';
-  // إعادة تعيين
-  currentMonitorRating = 0;
-  for(let i=1;i<=5;i++){
-    const el = document.getElementById('mstar-'+i);
-    if(el) el.style.opacity = '0.3';
-  }
-  const comment = document.getElementById('monitor-rating-comment');
-  if(comment) comment.value = '';
-}
-
-function setMonitorRating(stars){
-  currentMonitorRating = stars;
-  for(let i=1;i<=5;i++){
-    const el = document.getElementById('mstar-'+i);
-    if(el) el.style.opacity = i<=stars ? '1' : '0.3';
-  }
-}
-
-async function submitMonitorRating(){
-  if(!currentMonitorRating){ alert('اختر عدد النجوم'); return; }
-  const comment = document.getElementById('monitor-rating-comment')?.value.trim();
-  try{
-    const res = await fetch(`${API}/monitor/rate/${currentRatingRequestId}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({clientId:curUser.id, stars:currentMonitorRating, comment})
-    });
-    if(res.ok){
-      document.getElementById('monitor-rating-modal').style.display='none';
-      alert('✅ شكراً على تقييمك!');
-      loadClientRequests();
-    } else {
-      const d = await res.json();
-      alert(d.error||'تعذر الإرسال');
-    }
-  }catch(e){ alert('تعذر الاتصال'); }
-}
-
-// ══ SALEH BINAFSAK ══
-let salehImageBase64 = null;
-
-function onSalehImgChange(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const src = e.target.result;
-    salehImageBase64 = src.split(',')[1];
-    const preview = document.getElementById('saleh-preview-img');
-    const wrap = document.getElementById('saleh-preview-wrap');
-    const zone = document.getElementById('saleh-upload-zone');
-    const btn = document.getElementById('saleh-analyze-btn');
-    if(preview) preview.src = src;
-    if(wrap) wrap.style.display = '';
-    if(zone) zone.style.display = 'none';
-    if(btn) btn.style.display = '';
-    document.getElementById('saleh-result').style.display = 'none';
-    document.getElementById('saleh-error').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-
-function resetSaleh(){
-  salehImageBase64 = null;
-  document.getElementById('saleh-preview-wrap').style.display = 'none';
-  document.getElementById('saleh-upload-zone').style.display = '';
-  document.getElementById('saleh-analyze-btn').style.display = 'none';
-  document.getElementById('saleh-result').style.display = 'none';
-  document.getElementById('saleh-error').style.display = 'none';
-  document.getElementById('saleh-img-input').value = '';
-}
-
-async function analyzeSaleh(){
-  if(!salehImageBase64){ alert('اختر صورة أولاً'); return; }
-  const loading = document.getElementById('saleh-loading');
-  const result = document.getElementById('saleh-result');
-  const error = document.getElementById('saleh-error');
-  const btn = document.getElementById('saleh-analyze-btn');
-  loading.style.display = '';
-  result.style.display = 'none';
-  error.style.display = 'none';
-  btn.style.display = 'none';
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:salehImageBase64}},
-            {type:'text',text:`أنت مساعد في منصة عُمران للحرفيين السوريين. انظر لهذه الصورة وحلل المشكلة الموجودة.
-أجب بـ JSON فقط بدون أي نص إضافي بهذا الشكل:
-{"problem":"وصف المشكلة","severity":"بسيطة أو متوسطة أو خطيرة","canDIY":true أو false,"diySteps":["خطوة1","خطوة2"],"diyTools":["الأداة"],"needsCraftsman":true أو false,"craftsmanType":"نوع الحرفي أو null","urgency":"فوري أو قريباً أو يمكن الانتظار","tip":"نصيحة مفيدة"}`}
-          ]
-        }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text||'';
-    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
-    const parsed = JSON.parse(clean);
-    renderSalehResult(parsed);
-  }catch(e){
-    error.textContent = '⚠️ تعذر تحليل الصورة — تأكد من وضوحها وحاول مرة ثانية';
-    error.style.display = '';
-  }
-  loading.style.display = 'none';
-  btn.style.display = '';
-}
-
-function renderSalehResult(r){
-  const el = document.getElementById('saleh-result');
-  const sevColor = r.severity==='بسيطة'?'#16a34a':r.severity==='متوسطة'?'#d97706':'#dc2626';
-  const urgBg = r.urgency==='فوري'?'#fef2f2':r.urgency==='قريباً'?'#fef9c3':'#f0fdf4';
-  const urgColor = r.urgency==='فوري'?'#dc2626':r.urgency==='قريباً'?'#a16207':'#16a34a';
-
-  let html = `
-  <div style="animation:fadeInUp .4s ease">
-    <!-- المشكلة -->
-    <div style="background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:20px;margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-        <div style="font-size:15px;font-weight:900;color:#fff;flex:1;line-height:1.4">${r.problem}</div>
-        <span style="background:${sevColor}22;color:${sevColor};font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-right:8px;white-space:nowrap">${r.severity}</span>
-      </div>
-      <div style="background:${urgBg};color:${urgColor};border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px">⏰ ${r.urgency}</div>
-    </div>`;
-
-  if(r.canDIY && r.diySteps?.length){
-    html += `<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:20px;margin-bottom:12px">
-      <div style="font-weight:800;font-size:15px;margin-bottom:12px;color:#34d399">🔧 يمكنك إصلاحها بنفسك!</div>
-      ${r.diySteps.map((s,i)=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-        <div style="width:24px;height:24px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0">${i+1}</div>
-        <div style="font-size:14px;color:#e2e8f0;line-height:1.6">${s}</div>
-      </div>`).join('')}
-      ${r.diyTools?.length?`<div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:10px"><span style="font-size:12px;color:#94a3b8;font-weight:600">الأدوات: </span><span style="font-size:13px;color:#e2e8f0">${r.diyTools.join('، ')}</span></div>`:''}
-    </div>`;
-  }
-
-  if(r.needsCraftsman && r.craftsmanType){
-    html += `<div style="background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);border-radius:20px;padding:20px;margin-bottom:12px">
-      <div style="font-weight:800;font-size:15px;margin-bottom:12px;color:#93c5fd">👷 تحتاج حرفي متخصص</div>
-      <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border-radius:14px;padding:12px 16px;margin-bottom:14px">
-        <div style="font-size:32px">🔨</div>
-        <div>
-          <div style="font-weight:800;font-size:15px;color:#fff">${r.craftsmanType}</div>
-          <div style="color:#94a3b8;font-size:12px">الحرفي المناسب لمشكلتك</div>
-        </div>
-      </div>
-      <button onclick="showPage('pg-cat')" style="width:100%;padding:14px;background:linear-gradient(135deg,#2563eb,#1e3a8a);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(37,99,235,.4)">
-        🔍 ابحث عن ${r.craftsmanType} الآن
-      </button>
-    </div>`;
-  }
-
-  if(r.tip){
-    html += `<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:12px 16px;display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
-      <span style="font-size:18px">💡</span>
-      <div style="font-size:13px;color:#fcd34d;line-height:1.6">${r.tip}</div>
-    </div>`;
-  }
-
-  html += `<button onclick="resetSaleh()" style="width:100%;padding:13px;background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
-    📷 صوّر مشكلة أخرى
-  </button></div>`;
-
-  el.innerHTML = html;
-  el.style.display = '';
 }
 
 // ══ UTILS ══

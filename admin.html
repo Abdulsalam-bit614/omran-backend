@@ -76,7 +76,6 @@ tr:hover td{background:#fafbff}
 </head>
 <body>
 
-  
 <!-- شاشة Login -->
 <div id="admin-login-screen" style="position:fixed;inset:0;background:#f5f6fa;display:flex;align-items:center;justify-content:center;z-index:9999">
   <div style="background:#fff;border-radius:20px;padding:32px 28px;width:90%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.1);text-align:center">
@@ -405,7 +404,7 @@ const API = 'https://omransy.com/api';
 
 // ══ Admin Auth ══
 const ADMIN_CREDENTIALS = [
-  { user: 'omranadmin', pass: 'Omran2025' }
+  { user: 'omran_admin', pass: 'Omran@2025!' }
 ];
 
 function adminLogin(){
@@ -571,7 +570,7 @@ async function addMonitor(){
   // نسجله كمستخدم بـ role: monitor
   const pass = 'monitor' + Math.floor(1000+Math.random()*9000);
   try{
-    const res = await fetch(`${API}/admin/add-user`,{method:'POST',headers:{'Content-Type':'application/json'},
+    const res = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,phone,password:pass,role:'monitor',city,email:'',spec:'مراقب عُمران'})});
     const data = await res.json();
     if(res.ok){ alert(`✅ تم إضافة المراقب
@@ -584,8 +583,9 @@ async function addMonitor(){
 async function loadMonitorRequests(){
   try{
     // جيب المراقبين
-    const monitorsRes = await fetch(`${API}/monitors`);
-    const monitors = await monitorsRes.json();
+    const prosRes = await fetch(`${API}/pros`);
+    const pros = await prosRes.json();
+    const monitors = pros.filter(p=>p.role==='monitor'||p.spec==='مراقب عُمران');
     const monList = document.getElementById('monitors-list');
     if(monList){
       monList.innerHTML = monitors.length
@@ -607,10 +607,7 @@ async function loadMonitorRequests(){
     }
     const statusMap = {pending:'⏳ قيد الانتظار', assigned:'✅ تم التعيين', active:'🔄 نشط', done:'🏁 منتهي'};
     body.innerHTML = requests.map(r=>`<tr>
-      <td>
-        <strong>${r.clientName}</strong>
-        ${r.phone?`<br><a href="tel:${r.phone}" style="font-size:11px;color:var(--blue);font-weight:700">📞 ${r.phone}</a>`:''}
-      </td>
+      <td><strong>${r.clientName}</strong></td>
       <td>${r.proName}</td>
       <td><span class="badge ${r.status==='pending'?'b-yellow':r.status==='done'?'b-green':'b-blue'}">${statusMap[r.status]||r.status}</span></td>
       <td style="max-width:150px;font-size:12px">${r.notes||'—'}</td>
@@ -1027,16 +1024,14 @@ async function addProManually() {
   if (!name||!spec||!city||!phone) { alert('أكمل الحقول المطلوبة (*)'); return; }
   showLoader(true);
   try {
-    const roleEl = document.getElementById('ap-role');
-  const role = roleEl ? roleEl.value : 'pro';
-  const res = await fetch(`${API}/admin/add-user`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spec,city,village,phone,wa,description:desc,experience:exp,role,password:phone})});
+    const res = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spec,city,village,phone,wa,description:desc,experience:exp,role:'pro',password:phone})});
     const data = await res.json();
     if (res.ok&&data.success) {
       msg.style.display=''; msg.style.color='var(--green)';
       msg.textContent=`✅ تم إضافة ${name} — الرقم: ${data.userId} — كلمة المرور: رقم الهاتف`;
       ['ap-name','ap-spec','ap-village','ap-phone','ap-wa','ap-desc'].forEach(id=>document.getElementById(id).value='');
       await loadData();
-    } else { console.error('Server error:', data); alert(data.error||'خطأ في الإضافة: '+JSON.stringify(data)); }
+    } else alert(data.error||'خطأ في الإضافة');
   } catch(e) { alert('تعذر الاتصال'); } finally { showLoader(false); }
 }
 
