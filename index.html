@@ -227,7 +227,64 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </head>
 <body>
 
+<!-- ══ SPLASH SCREEN ══ -->
+<div id="splash-screen" style="position:fixed;inset:0;background:#103B70;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease">
 
+  <!-- الشعار SVG -->
+  <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:splashIn .8s cubic-bezier(.34,1.56,.64,1) both">
+    <!-- كتلة بناء خلفية يسار -->
+    <rect x="8" y="72" width="32" height="50" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+    <!-- كتلة بناء خلفية يمين -->
+    <rect x="120" y="60" width="32" height="62" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+    <!-- كتلة وسط صغيرة -->
+    <rect x="68" y="90" width="24" height="32" rx="3" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+    <!-- دائرة O الخارجية -->
+    <circle cx="80" cy="72" r="46" stroke="white" stroke-width="3" fill="none" opacity="0.9"/>
+    <!-- دائرة داخلية -->
+    <circle cx="80" cy="72" r="34" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="rgba(255,255,255,0.05)"/>
+
+    <!-- حرف ع بالعربي -->
+    <text x="80" y="86" text-anchor="middle" font-family="Tajawal,Arial" font-size="36" font-weight="900" fill="white">ع</text>
+
+    <!-- سهم للأعلى (نمو وتطور) -->
+    <g transform="translate(110, 18)" opacity="0.9">
+      <line x1="0" y1="22" x2="0" y2="4" stroke="#DF5E3F" stroke-width="3" stroke-linecap="round"/>
+      <polyline points="-6,10 0,2 6,10" fill="none" stroke="#DF5E3F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- نقطة برتقالية زخرف -->
+    <circle cx="124" cy="72" r="5" fill="#DF5E3F"/>
+    <circle cx="36" cy="72" r="3.5" fill="#DF5E3F" opacity="0.7"/>
+
+    <!-- خط تحت الدائرة -->
+    <rect x="56" y="122" width="48" height="3" rx="1.5" fill="#DF5E3F" opacity="0.9"/>
+  </svg>
+
+  <!-- الاسم -->
+  <div style="font-size:30px;font-weight:900;color:#fff;font-family:Tajawal,sans-serif;margin-top:4px;letter-spacing:1px;animation:splashFade .8s .3s both">عُمران</div>
+  <div style="font-size:12px;color:rgba(255,255,255,.55);letter-spacing:3px;font-family:sans-serif;margin-top:4px;animation:splashFade .8s .5s both">OMRAN PLATFORM</div>
+
+  <!-- Loading bar -->
+  <div style="width:120px;height:3px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:36px;overflow:hidden;animation:splashFade .8s .4s both">
+    <div style="height:100%;background:#DF5E3F;border-radius:3px;animation:splashBar 1.8s ease forwards"></div>
+  </div>
+</div>
+
+<style>
+@keyframes splashIn {
+  from { transform: scale(0.7); opacity:0; }
+  to   { transform: scale(1);   opacity:1; }
+}
+@keyframes splashFade {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes splashBar {
+  0%   { width:0%; }
+  100% { width:100%; }
+}
+</style>
 <div id="offline-banner">📵 لا يوجد اتصال بالإنترنت — بعض الميزات غير متاحة</div>
 <div id="app">
 
@@ -235,152 +292,125 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div id="pg-auth" class="page">
 <div class="auth-wrap">
   <div class="auth-logo">
-    <svg width="32" height="32" viewBox="0 0 38 38" fill="none">
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
       <rect x="2" y="20" width="7" height="12" rx="1.5" fill="white" opacity=".8"/>
       <rect x="15" y="12" width="7" height="20" rx="1.5" fill="white"/>
       <rect x="28" y="6" width="7" height="26" rx="1.5" fill="white" opacity=".85"/>
     </svg>
   </div>
   <div class="auth-title">عُمران</div>
-  <div class="auth-sub">منصة الحرفيين</div>
+  <div class="auth-sub">منصة الحرفيين السوريين</div>
   <div class="auth-tabs">
-    <button class="auth-tab on" id="tab-login" onclick="switchAuth('login')">دخول</button>
-    <button class="auth-tab" id="tab-register" onclick="switchAuth('register')">حساب جديد</button>
+    <button class="auth-tab on" onclick="switchAuth('login')">دخول</button>
+    <button class="auth-tab" onclick="switchAuth('register')">حساب جديد</button>
   </div>
-
   <!-- دخول -->
   <div id="auth-login">
-    <div class="fg"><label class="fl">رقم الهاتف أو الإيميل</label>
-      <input id="log-id" class="fi" type="text" placeholder="09xxxxxxxx أو email@example.com" onkeydown="if(event.key==='Enter')document.getElementById('log-pass').focus()">
+    <div class="fg"><label class="fl">رقم الهاتف أو الإيميل</label><input class="fi" id="log-id" placeholder="09xxxxxxxx"></div>
+    <div class="fg pass-wrap"><label class="fl">كلمة المرور</label><input class="fi" type="password" id="log-pass" placeholder="••••••">
+      <button class="pass-eye" onclick="togglePass('log-pass')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
-    <div class="fg pass-wrap"><label class="fl">كلمة المرور</label>
-      <input id="log-pass" class="fi" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      <button class="pass-eye" onclick="togglePass('log-pass')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-    </div>
-    <button class="btn btn-primary" onclick="doLogin()">دخول</button>
-    <p style="text-align:center;margin-top:12px;font-size:13px"><span onclick="switchAuth('forgot')" style="color:var(--blue);cursor:pointer">نسيت كلمة المرور؟</span></p>
+    <button class="btn btn-primary" onclick="doLogin()" style="width:100%;padding:15px;background:#DF5E3F;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;box-shadow:0 6px 20px rgba(223,94,63,.35)">دخول</button>
+    <p style="text-align:center;margin-top:12px;font-size:13px"><span style="color:var(--blue);cursor:pointer" onclick="switchAuth('forgot')">نسيت كلمة المرور؟</span></p>
   </div>
-
   <!-- تسجيل -->
   <div id="auth-register" style="display:none">
-    <!-- خطوة 1 -->
-    <div id="reg-step1">
-      <div class="fg"><label class="fl">الاسم الكامل *</label><input id="reg-name" class="fi" placeholder="اسمك الكامل"></div>
-      <div class="fg"><label class="fl">رقم الهاتف *</label>
-        <div style="display:flex;gap:8px">
-          <select id="reg-dial" class="fi" style="width:110px;flex-shrink:0"></select>
-          <input id="reg-phone" type="tel" class="fi" placeholder="9xxxxxxxx" style="flex:1">
-        </div>
+    <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" id="reg-name" placeholder="اسمك الكامل"></div>
+    <div class="fg"><label class="fl">رقم الهاتف</label>
+      <div style="display:flex;gap:6px">
+        <select class="fi" id="reg-dial" style="width:130px;flex-shrink:0"></select>
+        <input class="fi" id="reg-phone" type="tel" placeholder="xxxxxxxxx" style="flex:1">
       </div>
-      <div class="fg"><label class="fl">نوع الحساب</label>
-        <select id="reg-type" class="fi" onchange="onRegTypeChange()">
-          <option value="client">عميل (أبحث عن حرفي)</option>
-          <option value="pro">حرفي (أقدم خدماتي)</option>
-          <option value="seller">محل / بائع مواد</option>
-        </select>
-      </div>
-      <div id="reg-spec-wrap" style="display:none" class="fg">
-        <label class="fl">التخصص *</label>
-        <select id="reg-spec" class="fi">
-          <option value="">اختر تخصصك</option>
-          <option value="كهربائي">كهربائي</option><option value="سباك">سباك</option>
-          <option value="نجار">نجار</option><option value="دهان">دهان</option>
-          <option value="بناء">بناء</option><option value="بلاط">بلاط</option>
-          <option value="جبس">جبس</option><option value="حداد">حداد</option>
-          <option value="مطابخ">مطابخ</option><option value="هدم">هدم</option>
-          <option value="آليات">آليات</option><option value="محامي">محامي</option>
-          <option value="مهندس">مهندس</option><option value="محل مواد بناء">محل مواد بناء</option>
-        </select>
-      </div>
-      <div id="reg-city-wrap" style="display:none" class="fg">
-        <label class="fl">المدينة</label>
-        <select id="reg-city" class="fi" onchange="onCityChange('reg-city','reg-village-wrap','reg-village')"></select>
-      </div>
-      <div id="reg-village-wrap" style="display:none" class="fg">
-        <label class="fl">البلدة / القرية</label>
-        <input id="reg-village" class="fi" placeholder="البلدة أو القرية">
-      </div>
-      <div id="reg-shop-wrap" style="display:none" class="fg">
-        <label class="fl">اسم المحل *</label>
-        <input id="reg-shopname" class="fi" placeholder="مثال: محل أبو محمد لمواد البناء">
-      </div>
-      <div class="fg pass-wrap"><label class="fl">كلمة المرور *</label>
-        <input id="reg-pass" class="fi" type="password" placeholder="••••••••">
-        <button class="pass-eye" onclick="togglePass('reg-pass')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <button class="btn btn-primary" onclick="goToRegStep2()">التالي ←</button>
     </div>
-
-    <!-- خطوة 2: التحقق -->
+    <div class="fg"><label class="fl">الإيميل <span style="color:var(--text3)">(للتأكيد)</span></label><input class="fi" type="email" id="reg-email" placeholder="email@example.com"></div>
+    <div id="sms-verify-section" style="display:none"><div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:4px"><div style="font-size:13px;font-weight:700;color:#0369a1;margin-bottom:8px">📱 تأكيد رقم الهاتف</div><button type="button" onclick="sendSmsCode()" id="send-sms-btn" style="width:100%;padding:10px;background:#103B70;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">إرسال كود التحقق SMS</button><div id="sms-code-wrap" style="display:none"><input class="fi" id="sms-code-input" type="number" placeholder="أدخل الكود المرسل" style="margin-bottom:8px;letter-spacing:4px;font-size:16px;text-align:center"><button type="button" onclick="verifySmsCode()" style="width:100%;padding:10px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">تحقق من الكود ✅</button></div></div></div>
+    <div class="fg pass-wrap"><label class="fl">كلمة المرور</label><input class="fi" type="password" id="reg-pass" placeholder="6 أحرف على الأقل">
+      <button class="pass-eye" onclick="togglePass('reg-pass')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fg"><label class="fl">نوع الحساب</label>
+      <select class="fi" id="reg-type" onchange="onRegTypeChange()">
+        <option value="client">عميل — أبحث عن خدمة</option>
+        <option value="pro-worker">معلم حرفي</option>
+        <option value="pro-engineer">مهندس</option>
+        <option value="pro-contractor">متعهد</option>
+        <option value="pro-store">محل مواد بناء</option>
+      </select>
+    </div>
+    <!-- shopName — للبائع فقط -->
+    <div id="reg-shop-wrap" class="fg" style="display:none">
+      <label class="fl">اسم المحل *</label>
+      <input class="fi" id="reg-shopname" placeholder="مثال: محل أبو محمد لمواد البناء">
+    </div>
+    <div id="reg-spec-wrap" style="display:none" class="fg">
+      <label class="fl">التخصص</label>
+      <select class="fi" id="reg-spec"><option value="">اختر تخصصك</option></select>
+    </div>
+    <div class="fg"><label class="fl">المحافظة</label>
+      <select class="fi" id="reg-city" onchange="onRegCityChange()"><option value="">اختر محافظتك</option></select>
+    </div>
+    <div class="fg" id="reg-village-wrap" style="display:none">
+      <label class="fl">القرية</label>
+      <select class="fi" id="reg-village"><option value="">اختر القرية</option></select>
+    </div>
+    <!-- خطوة 1: إرسال الكود -->
+    <div id="reg-step1">
+      <button class="btn btn-primary" id="reg-send-btn" onclick="sendRegCode()">إرسال كود التأكيد 📧</button>
+      <button class="btn btn-secondary" style="margin-top:8px" onclick="doRegister()">التسجيل بدون تأكيد إيميل</button>
+    </div>
+    <!-- خطوة 2: إدخال الكود -->
     <div id="reg-step2" style="display:none">
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="font-size:32px;margin-bottom:8px">📱</div>
-        <div style="font-size:16px;font-weight:800;color:var(--text)">تأكيد الحساب</div>
-        <div style="font-size:13px;color:var(--text3);margin-top:4px">اختر طريقة التحقق</div>
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:var(--rsm);padding:14px;margin-bottom:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">📧</div>
+        <div style="font-size:13px;font-weight:700;color:#15803d">تم إرسال الكود لإيميلك</div>
+        <div style="font-size:12px;color:#16a34a;margin-top:2px" id="reg-email-display"></div>
       </div>
-
-      <!-- SMS -->
-      <div id="sms-verify-box" style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:14px;padding:16px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span style="font-size:18px">📱</span>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:#0369a1">كود SMS على هاتفك</div>
-            <div style="font-size:11px;color:var(--text3)">سريع وفوري</div>
-          </div>
-        </div>
-        <button type="button" onclick="sendSmsCode()" id="send-sms-btn" class="btn btn-primary" style="margin-bottom:8px">إرسال كود SMS</button>
-        <div id="sms-code-wrap" style="display:none;margin-top:10px">
-          <input id="sms-code-input" type="number" class="fi" placeholder="أدخل الكود" style="letter-spacing:6px;font-size:20px;text-align:center;margin-bottom:8px;font-weight:800">
-          <button type="button" onclick="verifySmsCode()" class="btn btn-primary">تحقق وأكمل التسجيل ✅</button>
+      <div class="fg">
+        <label class="fl" style="text-align:center;display:block;margin-bottom:10px">أدخل كود التأكيد المكون من 6 أرقام</label>
+        <input class="fi" id="reg-code" type="number" placeholder="● ● ● ● ● ●" style="text-align:center;font-size:28px;font-weight:900;letter-spacing:6px;padding:16px">
+      </div>
+      <div style="text-align:center;margin-bottom:16px">
+        <span id="reg-timer-wrap" style="font-size:13px;color:var(--text3)">ينتهي الكود خلال: <span id="reg-timer" style="font-weight:800;color:var(--blue)">10:00</span></span>
+        <div id="reg-resend-wrap" style="display:none;margin-top:8px">
+          <span style="font-size:13px;color:var(--text3)">لم يصلك الكود؟ </span>
+          <span style="font-size:13px;color:var(--blue);font-weight:700;cursor:pointer" onclick="resendCode()">إعادة الإرسال 🔄</span>
         </div>
       </div>
-
-      <!-- إيميل -->
-      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span style="font-size:18px">📧</span>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text)">تأكيد بالإيميل</div>
-            <div style="font-size:11px;color:var(--text3)">اختياري</div>
-          </div>
-        </div>
-        <input id="reg-email" type="email" class="fi" placeholder="email@example.com" style="margin-bottom:8px">
-        <button onclick="doRegister()" class="btn btn-secondary">سجّل مع تأكيد الإيميل</button>
-      </div>
-
-      <button onclick="doRegister(true)" class="btn btn-secondary" style="margin-bottom:8px">تسجيل بدون تأكيد</button>
-      <p style="text-align:center"><span onclick="document.getElementById('reg-step1').style.display='';document.getElementById('reg-step2').style.display='none'" style="color:var(--blue);cursor:pointer;font-size:13px">← رجوع</span></p>
+      <button class="btn btn-primary" onclick="doRegister()" style="width:100%;padding:15px;background:#DF5E3F;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;box-shadow:0 6px 20px rgba(223,94,63,.35)">إنشاء الحساب ✅</button>
+      <button class="btn btn-secondary" style="margin-top:8px" onclick="backToStep1()">← رجوع</button>
     </div>
   </div>
-
   <!-- نسيت كلمة المرور -->
   <div id="auth-forgot" style="display:none">
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:32px;margin-bottom:8px">🔑</div>
-      <div style="font-size:16px;font-weight:800">نسيت كلمة المرور؟</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:4px">سنرسل لك كود على إيميلك</div>
-    </div>
+    <!-- خطوة 1: إدخال الإيميل أو رقم الهاتف -->
     <div id="forgot-step1">
-      <div class="fg"><label class="fl">الإيميل أو رقم الهاتف</label>
-        <input id="forgot-identifier" class="fi" placeholder="email@example.com">
-      </div>
-      <button onclick="sendForgotCode()" class="btn btn-primary" style="margin-bottom:12px">إرسال الكود</button>
-      <p style="text-align:center"><span onclick="switchAuth('login')" style="color:var(--blue);cursor:pointer;font-size:13px">← رجوع</span></p>
+      <div class="fg"><label class="fl">رقم الهاتف أو الإيميل</label><input class="fi" id="forgot-identifier" placeholder="09xxxxxxxx أو email@example.com"></div>
+      <button class="btn btn-primary" id="forgot-send-btn" onclick="sendForgotCode()">إرسال كود التأكيد 📧</button>
+      <p style="text-align:center;margin-top:10px;font-size:13px"><span style="color:var(--blue);cursor:pointer" onclick="switchAuth('login')">← رجوع للدخول</span></p>
     </div>
+    <!-- خطوة 2: إدخال الكود وكلمة المرور الجديدة -->
     <div id="forgot-step2" style="display:none">
-      <div class="fg"><label class="fl">كود التحقق</label>
-        <input id="forgot-code" class="fi" placeholder="الكود المرسل" style="text-align:center;letter-spacing:4px;font-size:18px">
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:var(--rsm);padding:14px;margin-bottom:16px;text-align:center">
+        <div style="font-size:20px;margin-bottom:6px">📧</div>
+        <div style="font-size:13px;font-weight:700;color:#15803d">تم إرسال الكود لإيميلك</div>
+        <div style="font-size:12px;color:#16a34a;margin-top:2px" id="forgot-email-display"></div>
       </div>
-      <div class="fg pass-wrap"><label class="fl">كلمة المرور الجديدة</label>
-        <input id="forgot-pass" class="fi" type="password" placeholder="••••••••">
+      <div class="fg">
+        <label class="fl" style="text-align:center;display:block">أدخل كود التأكيد</label>
+        <input class="fi" id="forgot-code" type="number" placeholder="● ● ● ● ● ●" style="text-align:center;font-size:28px;font-weight:900;letter-spacing:6px;padding:16px">
       </div>
-      <button onclick="resetPassword()" class="btn btn-primary">تغيير كلمة المرور</button>
+      <div style="text-align:center;margin-bottom:12px">
+        <span id="forgot-timer-wrap" style="font-size:13px;color:var(--text3)">ينتهي الكود خلال: <span id="forgot-timer" style="font-weight:800;color:var(--blue)">10:00</span></span>
+      </div>
+      <div class="fg pass-wrap">
+        <label class="fl">كلمة المرور الجديدة</label>
+        <input class="fi" type="password" id="forgot-pass" placeholder="6 أحرف على الأقل">
+        <button class="pass-eye" onclick="togglePass('forgot-pass')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <button class="btn btn-primary" onclick="resetPassword()">تعيين كلمة المرور ✅</button>
+      <p style="text-align:center;margin-top:10px;font-size:13px"><span style="color:var(--blue);cursor:pointer" onclick="backToForgotStep1()">← رجوع</span></p>
     </div>
   </div>
+</div>
 </div>
 
 <!-- ══ HOME ══ -->
@@ -462,6 +492,10 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
         <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M18 11v-1l-3-3-3 3v1h2v6H8v-6h2v-1l-3-3-3 3v1H6v8h12v-8h2zm-9 6H7v-2h2v2zm0-4H7v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zM6 3l3 3-3 3V6H3V4h3V3zm9 0v1h3v2h-3v3l-3-3 3-3z"/></svg>
       </div>
     </div>
+
+
+
+  </div>
 
 </div>
 
@@ -1109,7 +1143,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
   <div class="side-brand">
     <div class="side-brand-row">
       <div class="side-brand-icon"><svg width="26" height="26" viewBox="0 0 38 38" fill="none"><rect x="2" y="20" width="7" height="12" rx="1.5" fill="white" opacity=".8"/><rect x="15" y="12" width="7" height="20" rx="1.5" fill="white"/><rect x="28" y="6" width="7" height="26" rx="1.5" fill="white" opacity=".85"/></svg></div>
-      <div><div class="side-brand-name">عُمران</div><div class="side-brand-tag">منصة الحرفيين</div></div>
+      <div><div class="side-brand-name">عُمران</div><div class="side-brand-tag">منصة الحرفيين السوريين</div></div>
     </div>
   </div>
   <div id="menu-user-info" style="display:none;padding:12px 20px;border-bottom:1px solid var(--border);background:#f8fafc">
@@ -1184,14 +1218,8 @@ function goBack(){showPage(prevPage||'pg-home');}
 // ══ AUTH ══
 function switchAuth(tab){
   if(tab==='register') setTimeout(restoreRegDraft, 100);
-  ['login','register','forgot'].forEach(t=>{const el=document.getElementById('auth-'+t);if(el)el.style.display=t===tab?'':'none';});
-  const tl=document.getElementById('tab-login');
-  const tr=document.getElementById('tab-register');
-  if(tl&&tr){
-    if(tab==='login'){ tl.classList.add('on'); tr.classList.remove('on'); }
-    else if(tab==='register'){ tr.classList.add('on'); tl.classList.remove('on'); }
-    else { tl.classList.remove('on'); tr.classList.remove('on'); }
-  }
+  ['login','register','forgot'].forEach(t=>document.getElementById('auth-'+t).style.display=t===tab?'':'none');
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('on',i===(tab==='login'?0:1)));
 }
 function togglePass(id){const el=document.getElementById(id);if(el)el.type=el.type==='password'?'text':'password';}
 
@@ -3425,18 +3453,6 @@ async function openShop(sellerId, sellerName){
   }
 }
 
-// ══ REGISTER STEPS ══
-function goToRegStep2(){
-  const name = document.getElementById('reg-name')?.value.trim();
-  const phone = document.getElementById('reg-phone')?.value.trim();
-  const pass = document.getElementById('reg-pass')?.value;
-  if(!name){ alert('أدخل اسمك الكامل'); return; }
-  if(!phone){ alert('أدخل رقم هاتفك'); return; }
-  if(!pass || pass.length < 6){ alert('كلمة المرور 6 أحرف على الأقل'); return; }
-  document.getElementById('reg-step1').style.display = 'none';
-  document.getElementById('reg-step2').style.display = '';
-}
-
 // ══ SMS VERIFY ══
 let smsVerified = false;
 
@@ -3483,8 +3499,6 @@ async function verifySmsCode(){
   const code = document.getElementById('sms-code-input')?.value.trim();
   if(!code){ alert('أدخل الكود'); return; }
   const phone = dial + raw.replace(/^0+/,'');
-  const btn = document.querySelector('#sms-code-wrap button');
-  if(btn){ btn.textContent='جاري التحقق...'; btn.disabled=true; }
   try{
     const res = await fetch(`${API}/auth/verify-sms-code`,{
       method:'POST',
@@ -3494,16 +3508,9 @@ async function verifySmsCode(){
     const data = await res.json();
     if(res.ok){
       smsVerified = true;
-      // تسجيل الحساب مباشرة بعد التحقق
-      await doRegister(true);
-    } else {
-      alert(data.error||'كود غير صحيح');
-      if(btn){ btn.textContent='تحقق وأكمل التسجيل ✅'; btn.disabled=false; }
-    }
-  }catch(e){
-    alert('تعذر الاتصال');
-    if(btn){ btn.textContent='تحقق وأكمل التسجيل ✅'; btn.disabled=false; }
-  }
+      document.getElementById('sms-verify-section').innerHTML = '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#16a34a">✅ تم التحقق من رقم الهاتف</div>';
+    } else { alert(data.error||'كود غير صحيح'); }
+  }catch(e){ alert('تعذر الاتصال'); }
 }
 
 // ══ UTILS ══
@@ -3519,7 +3526,7 @@ async function loadContact(){const el=document.getElementById('contact-list');if
 function openMenu(){document.getElementById('overlay').classList.add('show');document.getElementById('side-menu').classList.add('open');}
 function closeMenu(){document.getElementById('overlay').classList.remove('show');document.getElementById('side-menu').classList.remove('open');}
 function goMenu(page){closeMenu();setTimeout(()=>showPage(page),260);}
-function shareApp(){if(navigator.share)navigator.share({title:'عُمران',text:'منصة الحرفيين',url:window.location.href});else prompt('انسخ الرابط:',window.location.href);}
+function shareApp(){if(navigator.share)navigator.share({title:'عُمران',text:'منصة الحرفيين السوريين',url:window.location.href});else prompt('انسخ الرابط:',window.location.href);}
 function onMainSearch(){const q=document.getElementById('main-search')?.value?.trim();if(q&&q.length>2){const list=professionals.filter(p=>p.name?.includes(q)||p.spec?.includes(q));if(list.length===1)openDetail(list[0].id);}}
 
 // ══ SOCKET.IO ══
@@ -3670,8 +3677,6 @@ showPage('pg-auth');
 // استعادة الجلسة
 restoreSession();
 if(curUser)showPage('pg-home');
-
-
 
 // تحميل البيانات
 loadFromServer().catch(()=>{});
