@@ -20,12 +20,11 @@ html,body{height:100%;font-family:'Tajawal',sans-serif;background:var(--bg);colo
 input,textarea,select,button{font-family:'Tajawal',sans-serif}
 a{text-decoration:none;color:inherit}
 
-  
 /* ══ APP ══ */
 #app{width:100%;max-width:480px;height:100vh;position:relative;overflow:hidden;background:var(--bg);margin:0 auto;box-shadow:0 0 30px rgba(0,0,0,.1)}
 
 /* ══ PAGES ══ */
-.page{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;max-width:480px;margin:0 auto;background:var(--bg);z-index:1;overflow-y:scroll;-webkit-overflow-scrolling:touch}
+.page{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:1;overflow-y:scroll;-webkit-overflow-scrolling:touch}
 .page.active{display:flex;z-index:10}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 

@@ -1,4 +1,4 @@
-const CACHE = 'omran-v3';
+const CACHE = 'omran-v5';
 const STATIC = ['/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -7,7 +7,6 @@ self.addEventListener('install', e => {
   );
   self.skipWaiting();
 });
-
 
 self.addEventListener('activate', e => {
   e.waitUntil(

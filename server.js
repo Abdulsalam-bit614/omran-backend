@@ -7,7 +7,6 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_iGYKUZqE_Ku5Z8QAqNFM8JN
 const bcrypt = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 
-
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME || 'dwlmqgdua',
     api_key: process.env.CLOUDINARY_KEY || '332324852498996',
