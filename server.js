@@ -129,6 +129,8 @@ mongoose.connect(process.env.MONGODB_URI)
 // ══ Models ══
 const UserSchema = new mongoose.Schema({
     userId:       { type: String, unique: true },
+    shopName:     { type: String, default: '' },
+    shopDesc:     { type: String, default: '' },
     name:         { type: String, required: true },
     phone:        { type: String, unique: true, sparse: true },
     email:        { type: String, unique: true, sparse: true },
@@ -344,6 +346,192 @@ const ReviewSchema = new mongoose.Schema({
 }, { timestamps: true });
 const Review = mongoose.model('Review', ReviewSchema);
 
+// ══ OTP Codes ══
+const otpCodes = new Map();
+
+// ══ Twilio SMS ══
+async function sendSMS(to, body){
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken  = process.env.TWILIO_AUTH_TOKEN;
+    const msgService = process.env.TWILIO_MSG_SERVICE;
+    if(!accountSid || !authToken) return false;
+    try{
+        const params = new URLSearchParams();
+        params.append('To', to);
+        params.append('Body', body);
+        if(msgService) params.append('MessagingServiceSid', msgService);
+        else params.append('From', process.env.TWILIO_PHONE || '');
+        const res = await fetch(
+            `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            }
+        );
+        return res.ok;
+    }catch(e){ console.error('SMS error:', e); return false; }
+}
+
+// إرسال كود SMS
+app.post('/api/auth/send-sms-code', async (req, res) => {
+    try{
+        const { phone } = req.body;
+        if(!phone) return res.status(400).json({ error: 'رقم الهاتف مطلوب' });
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        otpCodes.set(phone, { code, expires: Date.now() + 10 * 60 * 1000 });
+        const sent = await sendSMS(phone, `كود تحقق عُمران: ${code}
+صالح لمدة 10 دقائق`);
+        if(!sent) return res.status(500).json({ error: 'تعذر إرسال الكود — تأكد من الرقم' });
+        res.json({ success: true });
+    }catch(e){ res.status(500).json({ error: 'خطأ' }); }
+});
+
+// التحقق من كود SMS
+app.post('/api/auth/verify-sms-code', async (req, res) => {
+    try{
+        const { phone, code } = req.body;
+        const stored = otpCodes.get(phone);
+        if(!stored) return res.status(400).json({ error: 'الكود غير موجود أو انتهت صلاحيته' });
+        if(Date.now() > stored.expires){ otpCodes.delete(phone); return res.status(400).json({ error: 'انتهت صلاحية الكود' }); }
+        if(stored.code !== code) return res.status(400).json({ error: 'الكود غير صحيح' });
+        otpCodes.delete(phone);
+        res.json({ success: true });
+    }catch(e){ res.status(500).json({ error: 'خطأ' }); }
+});
+
+// ══ Gemini AI ══
+app.post('/api/ai/chat', async (req, res) => {
+    try{
+        const { messages, city } = req.body;
+        if(!messages || !messages.length) return res.status(400).json({ error: 'الرسائل مطلوبة' });
+        const geminiKey = process.env.GEMINI_API_KEY;
+        if(!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
+
+        const pros = await User.find({ role: 'pro', blocked: { $ne: true } })
+            .select('name spec city village avgRating reviewCount isFeatured')
+            .sort({ avgRating: -1 }).limit(50).lean();
+        const prosData = pros.map(p =>
+            `${p.name} | ${p.spec} | ${p.city||''} ${p.village||''} | تقييم: ${p.avgRating||0}/5`
+        ).join('\n');
+
+        const systemPrompt = `أنت مساعد ذكي لمنصة عُمران — منصة الحرفيين السوريين.
+اسمك "مساعد عُمران" وتتحدث باللهجة العربية السورية البسيطة.
+المنصة تربط الحرفيين بأصحاب الحاجة في سوريا — omransy.com
+التخصصات: كهربائي، سباك، نجار، دهان، بناء، بلاط، جبس، حداد، مطابخ، مهندس، هدم، آليات، محامي، مراقب
+سوق عُمران: بيع وشراء مواد البناء
+خدمة المراقب: متابعة البناء عن بُعد
+
+الحرفيون المسجلون:
+${prosData}
+
+قواعد: أجب بإيجاز بالعامية السورية. لا تخترع حرفيين غير موجودين.`;
+
+        const geminiMessages = [];
+        geminiMessages.push({ role: 'user', parts: [{ text: systemPrompt }] });
+        geminiMessages.push({ role: 'model', parts: [{ text: 'تمام، أنا مساعد عُمران وجاهز!' }] });
+        messages.slice(-6).forEach(m => geminiMessages.push({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+        }));
+
+        const response = await fetch(
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey,
+            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: geminiMessages }) }
+        );
+        if(!response.ok){ const err = await response.json(); return res.status(500).json({ error: err.error?.message || 'خطأ' }); }
+        const data = await response.json();
+        res.json({ success: true, reply: data.candidates?.[0]?.content?.parts?.[0]?.text || 'عذراً، تعذرت الإجابة' });
+    }catch(e){ res.status(500).json({ error: 'تعذر الاتصال' }); }
+});
+
+app.post('/api/ai/analyze-image', async (req, res) => {
+    try{
+        const { imageBase64, mediaType } = req.body;
+        if(!imageBase64) return res.status(400).json({ error: 'الصورة مطلوبة' });
+        const geminiKey = process.env.GEMINI_API_KEY;
+        if(!geminiKey) return res.status(500).json({ error: 'إعداد الخدمة غير مكتمل' });
+
+        const response = await fetch(
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [
+                    { inline_data: { mime_type: mediaType || 'image/jpeg', data: imageBase64 } },
+                    { text: `أنت مساعد في منصة عُمران للحرفيين السوريين. انظر لهذه الصورة وحلل المشكلة.
+أجب بـ JSON فقط بدون أي نص أو backticks:
+{"problem":"وصف المشكلة","severity":"بسيطة أو متوسطة أو خطيرة","canDIY":true,"diySteps":["خطوة 1","خطوة 2"],"diyTools":["أداة"],"needsCraftsman":true,"craftsmanType":"نوع الحرفي","urgency":"فوري أو قريباً أو يمكن الانتظار","tip":"نصيحة مفيدة"}` }
+                ]}] })
+            }
+        );
+        if(!response.ok){ const err = await response.json(); return res.status(500).json({ error: err.error?.message || 'خطأ' }); }
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const clean = text.replace(/```json|```/g, '').trim();
+        const result = JSON.parse(clean);
+        res.json({ success: true, result });
+    }catch(e){ res.status(500).json({ error: 'تعذر تحليل الصورة' }); }
+});
+
+// ══ Sellers Routes ══
+app.get('/api/sellers', async (req, res) => {
+    try{
+        const sellers = await User.find({ role: 'seller', blocked: { $ne: true } })
+            .select('_id name shopName shopDesc city phone avatar').lean();
+        res.json(sellers);
+    }catch(e){ res.status(500).json([]); }
+});
+
+app.get('/api/sellers/:id', async (req, res) => {
+    try{
+        const seller = await User.findById(req.params.id)
+            .select('_id name shopName shopDesc city phone avatar').lean();
+        if(!seller) return res.status(404).json({ error: 'المحل غير موجود' });
+        const products = await Product.find({ sellerId: req.params.id, status: 'active' })
+            .sort({ createdAt: -1 }).lean();
+        res.json({ seller, products });
+    }catch(e){ res.status(500).json({ error: 'خطأ' }); }
+});
+
+// ══ Monitor Rating & Delete ══
+app.post('/api/monitor/rate/:requestId', async (req, res) => {
+    try{
+        const { clientId, stars, comment } = req.body;
+        const request = await MonitorRequest.findById(req.params.requestId);
+        if(!request) return res.status(404).json({ error: 'الطلب غير موجود' });
+        if(String(request.clientId) !== String(clientId)) return res.status(403).json({ error: 'غير مصرح' });
+        request.rating = stars;
+        request.ratingComment = comment || '';
+        await request.save();
+        // تحديث تقييم المراقب
+        if(request.monitorId){
+            const allRated = await MonitorRequest.find({ monitorId: request.monitorId, rating: { $exists: true, $gt: 0 } });
+            if(allRated.length){
+                const avg = (allRated.reduce((s,r) => s + r.rating, 0) / allRated.length).toFixed(1);
+                await User.findByIdAndUpdate(request.monitorId, { avgRating: parseFloat(avg) });
+            }
+        }
+        res.json({ success: true });
+    }catch(e){ res.status(500).json({ error: 'خطأ' }); }
+});
+
+app.delete('/api/monitor/request/:requestId', async (req, res) => {
+    try{
+        const { clientId } = req.body;
+        const request = await MonitorRequest.findById(req.params.requestId);
+        if(!request) return res.status(404).json({ error: 'الطلب غير موجود' });
+        const isAdmin = req.body.isAdmin;
+        if(!isAdmin && String(request.clientId) !== String(clientId)) return res.status(403).json({ error: 'غير مصرح' });
+        if(!isAdmin && request.status !== 'pending') return res.status(400).json({ error: 'لا يمكن حذف طلب جارٍ' });
+        await MonitorRequest.findByIdAndDelete(req.params.requestId);
+        res.json({ success: true });
+    }catch(e){ res.status(500).json({ error: 'خطأ' }); }
+});
+
 // ══ Auth Routes ══
 
 // ══ Send Verification Code ══
@@ -529,7 +717,6 @@ app.post('/api/upload/avatar', async (req, res) => {
             overwrite: true,
             transformation: [{ width: 300, height: 300, crop: 'fill', gravity: 'face' }]
         });
-        await require('mongoose').model('User').findByIdAndUpdate(userId, { avatar: result.secure_url });
         res.json({ success: true, url: result.secure_url });
     } catch(e) { res.status(500).json({ error: 'فشل الرفع' }); }
 });
